@@ -21,17 +21,16 @@ const Register = () => {
   };
 
   const handleSubmit = e => {
-    console.log('submit here');
+    console.log(formData);
     e.preventDefault();
 
     if (name && email && password1) {
       if (password1 === password2) {
 
-        console.log(`${process.env.REACT_APP_API_URL}/auth/register`);
-
+        console.log(`${process.env.REACT_APP_SERVER_API_URL}`);
         setFormData({ ...formData, textChange: 'Submitting' });
 
-        axios.post(`http://localhost:8080/auth/register`, {
+        axios.post(`https://ballot-io.herokuapp.com/auth/register`, {
             name,
             email,
             password: password1

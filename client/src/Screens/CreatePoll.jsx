@@ -35,7 +35,7 @@ const onChoiceChange = (index, value) => {
 }
 
 const createPoll = async () => {
-  const response = await fetch(`http://localhost:8080/user/create-poll`, {
+  const response = await fetch(`https://ballot-io.herokuapp.com/user/create-poll`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'

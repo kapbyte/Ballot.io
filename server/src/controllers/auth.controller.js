@@ -49,10 +49,11 @@ exports.registerController = async (req, res) => {
   });
   
   console.log('Token -> ', token);
+  console.log(`client -> ${process.env.CLIENT_URL}`);
 
   const msg = {
     to: req.body.email, // Change to your recipient
-    from: 'mrkelechichinaka@gmail.com', // Change to your verified sender
+    from: 'abigailchinaka@gmail.com', // Change to your verified sender
     subject: 'Account activation link',
     html: `
       <h1>Please use the following to activate your account</h1>
@@ -64,8 +65,8 @@ exports.registerController = async (req, res) => {
   };
 
   try {
-    await sgMail.send(msg)
-    res.send(`Email sent successfully to ${req.body.email}`);
+    await sgMail.send(msg);
+    return res.send(`Email sent successfully to ${req.body.email}`);
   } catch (error) {    
     console.log(error);
     return res.send(`Something went wrong. Please contact us noreply@gmail.com`);
@@ -201,7 +202,7 @@ exports.forgotPasswordController = (req, res) => {
       console.log("reset -> ", token);
 
       const msg = {
-        from: 'mrkelechichinaka@gmail.com',
+        from: 'abigailchinaka@gmail.com',
         to: email,
         subject: `Password forgot link`,
         html: `

@@ -14,7 +14,7 @@
       "url": "https://opensource.org/licenses/MIT"
     }
   },
-  "host": "localhost:8080",
+  "host": "https://ballot-io.herokuapp.com",
   "basePath": "/",
   "tags": [
     {

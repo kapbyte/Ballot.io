@@ -36,7 +36,7 @@ const ResetPassword = ({ match }) => {
           ...formData, 
           textChange: 'Submitting' 
         });
-        axios.put(`http://localhost:8080/auth/reset-password`, {
+        axios.put(`https://ballot-io.herokuapp.com/auth/reset-password`, {
           newPassword: password1,
           resetPasswordLink: token
         })

@@ -18,9 +18,10 @@ const Login = ({ history }) => {
 
   const handleSubmit = e => {
     e.preventDefault();
+    console.log(`${process.env.REACT_APP_SERVER_API_URL}`); 
     if (email && password1) {
       setFormData({ ...formData, textChange: 'Submitting' });
-      axios.post(`http://localhost:8080/auth/login`, {
+      axios.post(`https://ballot-io.herokuapp.com/auth/login`, {
         email,
         password: password1
       })
@@ -38,8 +39,6 @@ const Login = ({ history }) => {
       .catch(err => {
         setFormData({
           ...formData,
-          email: '',
-          password1: '',
           textChange: 'Sign In'
         });
         console.log(err.response);

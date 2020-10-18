@@ -18,11 +18,11 @@ const ForgetPassword = ({ history }) => {
 
   const handleSubmit = e => {
     e.preventDefault();
-    console.log(`${process.env.REACT_APP_API_URL}`);
+    console.log(`${process.env.REACT_APP_SERVER_API_URL}`);
 
     if (email) {
       setFormData({ ...formData, textChange: 'Submitting' });
-      axios.put(`http://localhost:8080/auth/forgot-password`, {
+      axios.put(`https://ballot-io.herokuapp.com/auth/forgot-password`, {
         email
       })
       .then(() => {
@@ -30,8 +30,8 @@ const ForgetPassword = ({ history }) => {
         toast.success(`Please check your email`);
       })
       .catch(err => {
-        console.log(err.response)
-        // toast.error(err.response.data.error);
+        console.log(err.response);
+        toast.error(err.response.data.error);
       });
     } else {
       toast.error('Please fill email field');

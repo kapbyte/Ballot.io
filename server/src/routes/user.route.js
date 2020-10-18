@@ -72,7 +72,7 @@ router.get('/polls/:poll', (req, res) => {
       if (record) {
         return res.status(200).json({ 
           status: true,
-          source: `Record from the cache`,
+          source: `Record from the redis cache`,
           record: JSON.parse(record)
         });
       } else {

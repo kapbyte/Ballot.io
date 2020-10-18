@@ -2,9 +2,7 @@ const express = require('express');
 const port = process.env.PORT || 8080;
 
 // Config dotenv
-require('dotenv').config({
-  path: './src/config/config.ballot.env'
-})
+require('dotenv').config({ path: './src/config/config.ballot.env' });
 
 const app = express();
 

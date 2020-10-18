@@ -29,7 +29,7 @@ const Activate = ({ match }) => {
   const handleSubmit = e => {
     e.preventDefault();
 
-    axios.post(`http://localhost:8080/auth/activate`, {
+    axios.post(`https://ballot-io.herokuapp.com/auth/activate`, {
       token
     })
     .then(res => {
@@ -42,7 +42,7 @@ const Activate = ({ match }) => {
     })
     .catch(err => {
       console.log(err);
-      // toast.error(err.response.data.errors);
+      toast.error(err.response.data.errors);
     });
   };
 
