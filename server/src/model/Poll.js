@@ -1,6 +1,12 @@
 const mongoose = require('mongoose');
 
 const pollSchema = new mongoose.Schema({
+  createdBy: {
+    type: String,
+    required: true,
+    min: 6,
+    max: 255
+  },
   title: {
     type: String,
     required: true,
@@ -11,6 +17,11 @@ const pollSchema = new mongoose.Schema({
     type: Object,
     required: true
   }],
+  totalVotes: {
+    type: Number,
+    count: 0,
+    required: true
+  },
   date: {
     type: Date,
     default: Date.now

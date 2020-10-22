@@ -111,7 +111,7 @@ export default function Dashboard() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap>
-            Persistent drawer
+            Ballot
           </Typography>
         </Toolbar>
       </AppBar>
@@ -135,6 +135,7 @@ export default function Dashboard() {
             <ListItem button key={text}>
               <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
               <ListItemText primary={text} />
+              <Link to="/create/poll" className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700"></Link>
             </ListItem>
           ))}
         </List>
@@ -147,6 +148,7 @@ export default function Dashboard() {
             </ListItem>
           ))}
         </List> */}
+        
       </Drawer>
       <main
         className={clsx(classes.content, {
@@ -154,78 +156,21 @@ export default function Dashboard() {
         })}
       >
         <div className={classes.drawerHeader} />
-        <Typography paragraph>
-        <Link to="/create/poll" className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Team</Link>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-          ut labore et dolore magna aliqua. Rhoncus dolor purus non enim praesent elementum
-          facilisis leo vel. Risus at ultrices mi tempus imperdiet. Semper risus in hendrerit
-          gravida rutrum quisque non tellus. Convallis convallis tellus id interdum velit laoreet id
-          donec ultrices. Odio morbi quis commodo odio aenean sed adipiscing. Amet nisl suscipit
-          adipiscing bibendum est ultricies integer quis. Cursus euismod quis viverra nibh cras.
-          Metus vulputate eu scelerisque felis imperdiet proin fermentum leo. Mauris commodo quis
-          imperdiet massa tincidunt. Cras tincidunt lobortis feugiat vivamus at augue. At augue eget
-          arcu dictum varius duis at consectetur lorem. Velit sed ullamcorper morbi tincidunt. Lorem
-          donec massa sapien faucibus et molestie ac.
-        </Typography>
-        <Typography paragraph>
-          Consequat mauris nunc congue nisi vitae suscipit. Fringilla est ullamcorper eget nulla
-          facilisi etiam dignissim diam. Pulvinar elementum integer enim neque volutpat ac
-          tincidunt. Ornare suspendisse sed nisi lacus sed viverra tellus. Purus sit amet volutpat
-          consequat mauris. Elementum eu facilisis sed odio morbi. Euismod lacinia at quis risus sed
-          vulputate odio. Morbi tincidunt ornare massa eget egestas purus viverra accumsan in. In
-          hendrerit gravida rutrum quisque non tellus orci ac. Pellentesque nec nam aliquam sem et
-          tortor. Habitant morbi tristique senectus et. Adipiscing elit duis tristique sollicitudin
-          nibh sit. Ornare aenean euismod elementum nisi quis eleifend. Commodo viverra maecenas
-          accumsan lacus vel facilisis. Nulla posuere sollicitudin aliquam ultrices sagittis orci a.
-        </Typography>
+
+        
+        <Switch>
+          <Route path="/create/poll">
+            <h1>Hello POLL</h1>
+          </Route>
+          <Route path="/topics">
+            <Topics />
+          </Route>
+          <Route path="/">
+            <Home />
+          </Route>
+        </Switch>
+
       </main>
     </div>
   );
 }
-
-
-// ResponsiveDrawer.propTypes = {
-//   /**
-//    * Injected by the documentation to work in an iframe.
-//    * You won't need it on your project.
-//    */
-//   window: PropTypes.func,
-// };
-
-// export default Dashboard;
-
-
-
-
-
-// import React from 'react';
-// import { Link } from 'react-router-dom';
-
-
-// function Dashboard() {
-//   return (
-//     <div className>
-//       <nav class="bg-gray-800">
-//         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-//           <div class="flex items-center justify-between h-16">
-//             <div class="flex items-center">
-//               <div class="flex-shrink-0">
-//                 <img class="h-8 w-8" src="https://tailwindui.com/img/logos/workflow-mark-on-dark.svg" alt="Workflow logo"/>
-//               </div>
-//               <div class="hidden md:block">
-//             <div class="ml-10 flex items-baseline space-x-4">
-//               <Link to="/" className="px-3 py-2 rounded-md text-sm font-medium text-white bg-gray-900 focus:outline-none focus:text-white focus:bg-gray-700">Dashboard</Link>
-
-//               <Link to="/create/poll" className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700">Team</Link>
-//             </div>
-//           </div>
-//             </div>
-//           </div>
-//         </div>
-//       </nav>
-//     </div>
-//   );
-// }
-
-// export default Dashboard;
-

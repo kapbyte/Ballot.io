@@ -35,24 +35,25 @@ const onChoiceChange = (index, value) => {
 }
 
 const createPoll = async () => {
-  const response = await fetch(`https://ballot-io.herokuapp.com/user/create-poll`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      title: title,
-      options: choices
-    })
-  });
+  // const response = await fetch(`https://ballot-io.herokuapp.com/user/create-poll`, {
+  //   method: 'POST',
+  //   headers: {
+  //     'Content-Type': 'application/json'
+  //   },
+  //   body: JSON.stringify({
+  //     title: title,
+  //     options: choices
+  //   })
+  // });
 
-  const data = await response.json();
-  console.log('response -> ', data);
-  if (data.status) {
-    toast.success(`${data.message}`);
-  } else {
-    toast.error(`${data.message}`);
-  }
+  // const data = await response.json();
+  localStorage.setItem('response', JSON.stringify({"response": "testing"}));
+  // console.log('response -> ', data);
+  // if (data.status) {
+  //   toast.success(`${data.message}`);
+  // } else {
+  //   toast.error(`${data.message}`);
+  // }
 }
 
   return (

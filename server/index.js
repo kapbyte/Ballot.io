@@ -24,7 +24,4 @@ app.use('/auth', authRouter);
 app.use('/user', userRouter);
 
 // Connect to MongoDB and start server
-connectToDB();
-
-// Start server.
-app.listen(port, () => console.log(`Server listening on port ${port}`));
+connectToDB(app);

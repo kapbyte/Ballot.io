@@ -21,8 +21,8 @@ Ballot is a real-time E-Voting application. Our aim is to bring the voting box o
 - Redis
 - Pusher 
 - Tailwind CSS / Material-UI
-- Mocha / Chai (Testing)
-- Swagger (Documentation)
+- Mocha / Chai (API Testing)
+- Swagger (API Documentation)
 
 
 ## Contributions
