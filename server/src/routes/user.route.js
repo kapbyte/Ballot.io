@@ -25,7 +25,7 @@ client.on('connect', () => {
 
 
 // Endpoint to create a poll
-router.post('/create-poll', verifyTokenController, async (req, res) => {
+router.post('/create-poll', async (req, res) => {
   const { error } = createPollDetails.validate(req.body);
   if (error) {
     return res.status(401).json({
@@ -35,6 +35,7 @@ router.post('/create-poll', verifyTokenController, async (req, res) => {
   }
 
   const data = {
+    createdBy: req.body.createdBy,
     title: req.body.title,
     options: req.body.options.map((option) => ({
       name: option,
@@ -63,7 +64,7 @@ router.post('/create-poll', verifyTokenController, async (req, res) => {
 
 
 // Endpoint to get vote
-router.get('/polls/:poll', (req, res) => {
+router.get('/polls/:poll', async (req, res) => {
   try {
     const pollID = req.params.poll;
 
@@ -76,7 +77,7 @@ router.get('/polls/:poll', (req, res) => {
           record: JSON.parse(record)
         });
       } else {
-        const pollData = await Poll.findOne({ _id: req.params.poll });
+        const pollData = await Poll.find({ createdBy: req.params.poll });
 
         // save the record in the cache for subsequent request
         client.setex(pollID, 1440, JSON.stringify(pollData));
@@ -91,7 +92,8 @@ router.get('/polls/:poll', (req, res) => {
     });
 
   } catch (error) {
-    console.log(error)
+    console.log(error);
+    process.exit();
     return res.status(501).json({
       status: false,
       message: "Something went wrong",

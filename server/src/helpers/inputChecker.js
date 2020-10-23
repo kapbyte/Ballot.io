@@ -26,6 +26,7 @@ exports.resetPasswordDetails  = Joi.object({
 
 // Reset password input validation
 exports.createPollDetails  = Joi.object({ 
+  createdBy: Joi.string().min(6).required(),
   title: Joi.string().min(6).required(),
   options: Joi.array().required().min(2).max(4)
 });
