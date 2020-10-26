@@ -41,7 +41,8 @@ router.post('/create-poll', async (req, res) => {
       name: option,
       count: 0,
       option_id: mongoose.Types.ObjectId()
-    }))
+    })),
+    totalVotes: 0
   }
 
   const poll = new Poll(data);

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import FormDialog from './FormDialog';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -7,10 +8,11 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import DeleteIcon from '@material-ui/icons/Delete';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 
-import FormDialog from './FormDialog';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -31,6 +33,10 @@ function createData(name, calories, fat, carbs, protein) {
   return { name, calories, fat, carbs, protein };
 }
 
+function handleCheckItem() {
+  console.log('handleCheckItem');
+}
+
 const rows = [
   createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
   createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
@@ -45,23 +51,25 @@ function handleCreatePoll() {
 
 export default function GetPollList() {
   const classes = useStyles();
+  const [ pollListData, setPollListData ] = useState({});
 
   useEffect(() => {
-    console.log('page loaded');
+    try {
+      console.log('page loaded');
+      const userID = JSON.parse(localStorage.getItem('user'))._id;
 
-    // const response = await fetch(`https://ballot-io.herokuapp.com/user/create-poll`, {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   },
-    //   body: JSON.stringify({
-    //     title: title,
-    //     options: choices
-    //   })
-    // });
-    // localStorage.setItem('pollList', response);
-    console.log(JSON.parse(localStorage.getItem('user')));
-  });
+      (async () => {
+        let response = await fetch(`http://localhost:8080/user/polls/${userID}`);
+        let data = await response.json();
+        // setPollListData();
+        localStorage.setItem('pollList', JSON.stringify(data));
+        console.log(data);
+      })();
+
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
 
   const [open, setOpen] = React.useState(false);
 
@@ -80,16 +88,18 @@ export default function GetPollList() {
         <Table className={classes.table} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>Dessert (100g serving)</TableCell>
-              <TableCell align="right">Calories</TableCell>
-              <TableCell align="right">Fat&nbsp;(g)</TableCell>
-              <TableCell align="right">Carbs&nbsp;(g)</TableCell>
+              <TableCell></TableCell>
+              <TableCell>Title</TableCell>
+              <TableCell align="right">Contestant</TableCell>
+              <TableCell align="right">Total Vote</TableCell>
+              <TableCell align="right">Expires</TableCell>
               <TableCell align="right">Protein&nbsp;(g)</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
+            {rows.map((row, index) => (
               <TableRow key={row.name}>
+                <TableCell>{index + 1}</TableCell>
                 <TableCell component="th" scope="row">
                   {row.name}
                 </TableCell>
@@ -97,6 +107,7 @@ export default function GetPollList() {
                 <TableCell align="right">{row.fat}</TableCell>
                 <TableCell align="right">{row.carbs}</TableCell>
                 <TableCell align="right">{row.protein}</TableCell>
+                <MoreVertIcon onClick={handleCheckItem}/>
               </TableRow>
             ))}
           </TableBody>

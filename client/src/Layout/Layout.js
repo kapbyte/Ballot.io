@@ -18,6 +18,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import PollIcon from '@material-ui/icons/Poll';
+import { Button } from '@material-ui/core';
 
 const drawerWidth = 240;
 
@@ -110,9 +111,9 @@ export default function Layout(props) {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap>
-            Ballot
-          </Typography>
+          <Link to="/dashboard">
+            <Typography variant="h6" noWrap>Ballot</Typography>
+          </Link>
         </Toolbar>
       </AppBar>
       <Drawer
@@ -131,7 +132,7 @@ export default function Layout(props) {
         </div>
         <Divider />
         <List>
-          {['Poll', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+          {['Poll', 'Vote', 'Send email', 'Drafts'].map((text, index) => (
             <ListItem button key={text}>
               <ListItemIcon>{index % 2 === 0 ? <PollIcon /> : <InboxIcon />}</ListItemIcon>
               <ListItemText primary={text} />
