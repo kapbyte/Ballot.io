@@ -18,13 +18,23 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import PollIcon from '@material-ui/icons/Poll';
-import { Button } from '@material-ui/core';
+import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import UserProfileDialog from '../Screens/UserProfileDialog';
+
 
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
+  },
+  menuButton: {
+    marginRight: theme.spacing(2),
+  },
+  title: {
+    flexGrow: 1,
   },
   appBar: {
     transition: theme.transitions.create(['margin', 'width'], {
@@ -92,6 +102,18 @@ export default function Layout(props) {
     setOpen(false);
   };
 
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const openProfile = Boolean(anchorEl);
+
+  const handleMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -111,9 +133,43 @@ export default function Layout(props) {
           >
             <MenuIcon />
           </IconButton>
-          <Link to="/dashboard">
-            <Typography variant="h6" noWrap>Ballot</Typography>
-          </Link>
+
+          <Typography variant="h6" className={classes.title} noWrap>Ballot</Typography>
+
+          <div float="right">
+            <IconButton
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleMenu}
+              color="inherit"
+            >
+              <AccountCircle />
+            </IconButton>
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorEl}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={openProfile}
+              onClose={handleClose}
+            >
+              <MenuItem onClick={handleClose}>
+                <UserProfileDialog 
+                  data={props.data}
+                />
+              </MenuItem>
+              <MenuItem onClick={handleClose}>Logout</MenuItem>
+            </Menu>
+          </div>
+
         </Toolbar>
       </AppBar>
       <Drawer
@@ -132,11 +188,10 @@ export default function Layout(props) {
         </div>
         <Divider />
         <List>
-          {['Poll', 'Vote', 'Send email', 'Drafts'].map((text, index) => (
-            <ListItem button key={text}>
+          {['Dashboard', 'Poll', 'Vote', 'Drafts'].map((text, index) => (
+            <ListItem button key={text} component={Link} to={text.toLowerCase()}>
               <ListItemIcon>{index % 2 === 0 ? <PollIcon /> : <InboxIcon />}</ListItemIcon>
               <ListItemText primary={text} />
-              <Link to="/poll" className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700"></Link>
             </ListItem>
           ))}
         </List>

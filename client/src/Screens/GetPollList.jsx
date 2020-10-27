@@ -76,7 +76,7 @@ export default function GetPollList() {
   return (
     <div className={classes.root}>
       <h1>Poll list of { JSON.parse(localStorage.getItem('user')).name }</h1>
-      { !isLoaded ? <CircularProgress /> : isLoaded && (pollData == undefined || !pollData.length) ? <DeleteIcon /> : (
+      { !isLoaded ? <CircularProgress /> : isLoaded && (pollData === undefined || !pollData.length) ? <DeleteIcon /> : (
         <TableContainer component={Paper}>
           <Table className={classes.table} aria-label="simple table">
             <TableHead>

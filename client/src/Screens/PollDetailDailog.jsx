@@ -8,6 +8,9 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import Typography from '@material-ui/core/Typography';
+import DeleteIcon from '@material-ui/icons/Delete';
+import ViewListOutlinedIcon from '@material-ui/icons/ViewListOutlined';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -101,9 +104,13 @@ export default function PollDetailDailog(props) {
       {/* <Button variant="outlined" color="primary" onClick={handleClickOpen}>
         Open form dialog file.js
       </Button> */}
-      <Fab color="primary" aria-label="add" onClick={handleClickOpen} > 
+      {/* <Fab color="primary" aria-label="add" onClick={handleClickOpen} > 
         <AddIcon />
-      </Fab>
+      </Fab> */}
+      <Typography onClick={handleClickOpen}>
+        <ViewListOutlinedIcon />
+        View
+      </Typography>
       <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
         <ToastContainer />
         {/* <CircularProgress /> */}

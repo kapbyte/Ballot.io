@@ -1,40 +1,37 @@
 import React, { useEffect, useState } from 'react';
+import NewsCard from './NewsCards/NewsCards';
+import alanBtn from "@alan-ai/alan-sdk-web";
 import { useSelector, useDispatch } from 'react-redux';
 import { increment, decrement, signIn, pollList } from '../actions';
+import { Link, Redirect } from 'react-router-dom';
+
 
 export default function Dashboard() {
   const count = useSelector(state => state.count);
   const isLogged = useSelector(state => state.isLogged);
   const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   try {
-  //     console.log('page loaded');
-  //     const userID = JSON.parse(localStorage.getItem('user'))._id;
+  const [newsArticles, setNewsArticles] = useState([]);
 
-  //     (async () => {
-  //       let response = await fetch(`http://localhost:8080/user/polls/${userID}`);
-  //       let data = await response.json();
-  //       dispatch(pollList(data));
-  //       console.log("dashboard -> ", data);
-  //     })();
 
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }, []);
+  useEffect(() => {
+    alanBtn({
+      key: '9767423808b4be1092ee90edbd6e96a02e956eca572e1d8b807a3e2338fdd0dc/stage',
+      onCommand: ({ command }) => {
+        if (command === 'Open dashboard') {
+            // Call the client code that will react to the received command
+          console.log('opening dashboard');
+          return <Redirect to='/poll' />
+        }
+        // console.log('command -> ', command);
+      }
+    });
+  }, []);
 
 
   return (
     <div>
       <h1>Welcome to your dashboard...</h1>
-      <h1>Your count is: { count }</h1>
-      <button onClick={ () => dispatch(increment(5)) }>+</button>
-      <button onClick={ () => dispatch(decrement()) }>-</button>
-      <div>
-        <h1>isLoggedIn: { isLogged ? <h1>True</h1> : <h1>False</h1> }</h1>
-        <button onClick={ () => dispatch(signIn()) } >Login</button>
-      </div>
     </div>
   );
 }
