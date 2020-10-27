@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { pollList } from '../actions';
 import FormDialog from './FormDialog';
+import MenuPoll from './MenuPoll';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -12,6 +15,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 
 
@@ -29,29 +33,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
+function handleCheckItem(index) {
+  console.log('handleCheckItem', index);
 }
 
-function handleCheckItem() {
-  console.log('handleCheckItem');
-}
-
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-];
-
-function handleCreatePoll() {
-  console.log('handleCreatePoll');
-}
 
 export default function GetPollList() {
   const classes = useStyles();
-  const [ pollListData, setPollListData ] = useState({});
+  const [isLoaded, setIsLoaded] = useState(false);
+  const pollData = useSelector(state => state.pollDataList.pollData);
+  const dispatch = useDispatch();
+  console.log("poll page -> ", pollData);
 
   useEffect(() => {
     try {
@@ -61,9 +53,8 @@ export default function GetPollList() {
       (async () => {
         let response = await fetch(`http://localhost:8080/user/polls/${userID}`);
         let data = await response.json();
-        // setPollListData();
-        localStorage.setItem('pollList', JSON.stringify(data));
-        console.log(data);
+        dispatch(pollList(data));
+        setIsLoaded(true);
       })();
 
     } catch (error) {
@@ -80,39 +71,47 @@ export default function GetPollList() {
   const handleClose = (value) => {
     setOpen(false);
   };
+  
 
   return (
     <div className={classes.root}>
       <h1>Poll list of { JSON.parse(localStorage.getItem('user')).name }</h1>
-      <TableContainer component={Paper}>
-        <Table className={classes.table} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell></TableCell>
-              <TableCell>Title</TableCell>
-              <TableCell align="right">Contestant</TableCell>
-              <TableCell align="right">Total Vote</TableCell>
-              <TableCell align="right">Expires</TableCell>
-              <TableCell align="right">Protein&nbsp;(g)</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map((row, index) => (
-              <TableRow key={row.name}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell component="th" scope="row">
-                  {row.name}
-                </TableCell>
-                <TableCell align="right">{row.calories}</TableCell>
-                <TableCell align="right">{row.fat}</TableCell>
-                <TableCell align="right">{row.carbs}</TableCell>
-                <TableCell align="right">{row.protein}</TableCell>
-                <MoreVertIcon onClick={handleCheckItem}/>
+      { !isLoaded ? <CircularProgress /> : isLoaded && (pollData == undefined || !pollData.length) ? <DeleteIcon /> : (
+        <TableContainer component={Paper}>
+          <Table className={classes.table} aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell></TableCell>
+                <TableCell>Title</TableCell>
+                <TableCell align="center">Contestant</TableCell>
+                <TableCell align="center">Total Vote</TableCell>
+                <TableCell align="center">Expires</TableCell>
+                <TableCell align="center">Poll ID</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {pollData.map((row, index) => (
+                <TableRow key={index}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell component="th" scope="row">
+                    { row.title }
+                  </TableCell>
+                  <TableCell align="center">{ row.options.length }</TableCell>
+                  <TableCell align="center">{ row.totalVotes }</TableCell>
+                  <TableCell align="center">{ row.date }</TableCell>
+                  <TableCell align="center">{ row._id }</TableCell>
+                  <MenuPoll
+                    data={row}
+                    onClick={() => {
+                      handleCheckItem(index);
+                    }}
+                  />
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
       {/* <Fab color="primary" aria-label="add" > 
         <AddIcon />
       </Fab> */}

@@ -17,3 +17,12 @@ export const isLoggedReducer = (state = false, action) => {
       return state;
   }
 }
+
+export const pollListReducer = (state = {}, action) => {
+  switch(action.type) {
+    case 'POLL-LIST':
+      return action.payload;
+    default:
+      return state;
+  }
+}

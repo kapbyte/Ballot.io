@@ -17,6 +17,7 @@ Ballot is a real-time E-Voting application. Our aim is to bring the voting box o
 - Node
 - Express
 - React
+- Redux
 - MongoDB
 - Redis
 - Pusher 

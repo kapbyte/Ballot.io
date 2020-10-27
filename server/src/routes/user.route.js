@@ -70,26 +70,35 @@ router.get('/polls/:poll', async (req, res) => {
     const pollID = req.params.poll;
 
     // Check the redis store for the data first
-    client.get(pollID, async (err, record) => {
-      if (record) {
-        return res.status(200).json({ 
-          status: true,
-          source: `Record from the redis cache`,
-          record: JSON.parse(record)
-        });
-      } else {
-        const pollData = await Poll.find({ createdBy: req.params.poll });
+    // client.get(pollID, async (err, record) => {
+    //   if (record) {
+    //     return res.status(200).json({ 
+    //       status: true,
+    //       source: `Record from the redis cache`,
+    //       record: JSON.parse(record)
+    //     });
+    //   } else {
+    //     const pollData = await Poll.find({ createdBy: req.params.poll });
 
-        // save the record in the cache for subsequent request
-        client.setex(pollID, 1440, JSON.stringify(pollData));
+    //     // save the record in the cache for subsequent request
+    //     client.setex(pollID, 1440, JSON.stringify(pollData));
 
-        // return the result to the client
-        return res.status(200).json({ 
-          status: true,
-          source: `Record from the server`,
-          pollData
-        });
-      }
+    //     // return the result to the client
+    //     return res.status(200).json({ 
+    //       status: true,
+    //       source: `Record from the server`,
+    //       pollData
+    //     });
+    //   }
+    // });
+
+    const pollData = await Poll.find({ createdBy: req.params.poll });
+
+    // return the result to the client
+    return res.status(200).json({ 
+      status: true,
+      source: `Record from the server`,
+      pollData
     });
 
   } catch (error) {
@@ -104,9 +113,9 @@ router.get('/polls/:poll', async (req, res) => {
 
 
 // Endpoint to cast vote
-router.put('/polls/:poll', async (req, res) => {
+router.put('/polls/:pollID', async (req, res) => {
   try {
-    const pollID = req.params.poll;
+    const pollID = req.params.pollID;
 
     await client.SISMEMBER(pollID, req.body.ip, (err, result) => {
       // Check the redis store for the data first
@@ -149,15 +158,29 @@ router.put('/polls/:poll', async (req, res) => {
     console.log(error);
     return res.status(501).json({
       status: false,
-      message: "Something went wrong",
+      message: "Something went wrong"
     });
   }
 });
 
 
 // Endpoint to delete a poll
-router.delete('/polls/:poll', async (req, res) => {
-  
+router.delete('/polls/:pollID', async (req, res) => {
+  try {
+    const pollID = req.params.pollID;
+
+    await Poll.findByIdAndDelete({ _id: pollID });
+    return res.status(200).json({
+      status: true,
+      message: "Successfully deleted item!"
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(501).json({
+      status: false,
+      message: "Document could not be deleted or does not exist."
+    });
+  }
 });
 
 
