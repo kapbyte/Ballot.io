@@ -16,7 +16,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import CircularProgress from '@material-ui/core/CircularProgress';
-
+import Typography from '@material-ui/core/Typography';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -41,7 +41,7 @@ function handleCheckItem(index) {
 export default function GetPollList() {
   const classes = useStyles();
   const [isLoaded, setIsLoaded] = useState(false);
-  const pollData = useSelector(state => state.pollDataList.pollData);
+  const pollData = useSelector(state => state.pollDataList.pollDataList);
   const dispatch = useDispatch();
   console.log("poll page -> ", pollData);
 
@@ -51,8 +51,12 @@ export default function GetPollList() {
       const userID = JSON.parse(localStorage.getItem('user'))._id;
 
       (async () => {
-        let response = await fetch(`http://localhost:8080/user/polls/${userID}`);
+        let response = await fetch(`http://localhost:8080/user/polls/userID/${userID}`);
+        console.log("response -> ", response);
+        
         let data = await response.json();
+        console.log("data -> ", data);
+
         dispatch(pollList(data));
         setIsLoaded(true);
       })();
@@ -75,7 +79,7 @@ export default function GetPollList() {
 
   return (
     <div className={classes.root}>
-      <h1>Poll list of { JSON.parse(localStorage.getItem('user')).name }</h1>
+      <Typography variant="h6">Poll list of { JSON.parse(localStorage.getItem('user')).name }</Typography>
       { !isLoaded ? <CircularProgress /> : isLoaded && (pollData === undefined || !pollData.length) ? <DeleteIcon /> : (
         <TableContainer component={Paper}>
           <Table className={classes.table} aria-label="simple table">

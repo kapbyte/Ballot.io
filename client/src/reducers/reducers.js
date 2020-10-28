@@ -26,3 +26,12 @@ export const pollListReducer = (state = {}, action) => {
       return state;
   }
 }
+
+export const pollItemReducer = (state = {}, action) => {
+  switch(action.type) {
+    case 'POLL-ITEM':
+      return action.payload;
+    default:
+      return state;
+  }
+}

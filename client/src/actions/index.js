@@ -23,3 +23,10 @@ export const pollList = (data) => {
     payload: data
   }
 }
+
+export const pollItem = (data) => {
+  return {
+    type: 'POLL-ITEM',
+    payload: data
+  }
+}

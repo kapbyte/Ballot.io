@@ -188,8 +188,8 @@ export default function Layout(props) {
         </div>
         <Divider />
         <List>
-          {['Dashboard', 'Poll', 'Vote', 'Drafts'].map((text, index) => (
-            <ListItem button key={text} component={Link} to={text.toLowerCase()}>
+          {['Dashboard', 'Poll', 'Vote'].map((text, index) => (
+            <ListItem button key={text} component={Link} to={`/${text.toLowerCase()}`}>
               <ListItemIcon>{index % 2 === 0 ? <PollIcon /> : <InboxIcon />}</ListItemIcon>
               <ListItemText primary={text} />
             </ListItem>

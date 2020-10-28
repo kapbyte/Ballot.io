@@ -64,10 +64,34 @@ router.post('/create-poll', async (req, res) => {
 });
 
 
-// Endpoint to get vote
-router.get('/polls/:poll', async (req, res) => {
+// Endpoint to get list of polls created by a user (find poll by userID)
+router.get('/polls/userID/:userID', async (req, res) => {
   try {
-    const pollID = req.params.poll;
+    const pollDataList = await Poll.find({ createdBy: req.params.userID });
+
+    // return the result to the client
+    return res.status(200).json({ 
+      status: true,
+      source: `Record from the server`,
+      pollDataList
+    });
+
+  } catch (error) {
+    console.log(error);
+    process.exit();
+
+    return res.status(501).json({
+      status: false,
+      message: "Something went wrong",
+    });
+  }
+});
+
+
+// Endpoint to find a particular poll based on the pollID
+router.get('/poll/pollID/:pollID', async (req, res) => {
+  try {
+    // const pollID = req.params.pollID;
 
     // Check the redis store for the data first
     // client.get(pollID, async (err, record) => {
@@ -78,7 +102,7 @@ router.get('/polls/:poll', async (req, res) => {
     //       record: JSON.parse(record)
     //     });
     //   } else {
-    //     const pollData = await Poll.find({ createdBy: req.params.poll });
+    //     const pollData = await Poll.find({ createdBy: req.params.pollID });
 
     //     // save the record in the cache for subsequent request
     //     client.setex(pollID, 1440, JSON.stringify(pollData));
@@ -92,15 +116,17 @@ router.get('/polls/:poll', async (req, res) => {
     //   }
     // });
 
-    const pollData = await Poll.find({ createdBy: req.params.poll });
+    const pollData = await Poll.findOne({ _id: req.params.pollID });
 
-    // return the result to the client
-    return res.status(200).json({ 
-      status: true,
-      source: `Record from the server`,
-      pollData
-    });
-
+    if (pollData) {
+      // return the result to the client
+      return res.status(200).json({ 
+        status: true,
+        source: `Record from the server`,
+        pollData
+      });
+    }
+    
   } catch (error) {
     console.log(error);
     process.exit();
