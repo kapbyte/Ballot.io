@@ -1,64 +1,92 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import {
-  Grid,
-  Grow,
-  Typography
-} from '@material-ui/core';
-import DashboardCard from './DashboardCard/DashboardCard';
-import DashboardPollDetails from './DashboardPollDetails/DashboardPollDetails';
-import NewsCard from './NewsCards/NewsCards';
-import alanBtn from "@alan-ai/alan-sdk-web";
-import { useSelector, useDispatch } from 'react-redux';
-import { increment, decrement, signIn, pollList } from '../actions';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Box from '@material-ui/core/Box';
+import Typography from '@material-ui/core/Typography';
+import Grow from '@material-ui/core/Grow';
+import Container from '@material-ui/core/Container';
+import Grid from '@material-ui/core/Grid';
+import Paper from '@material-ui/core/Paper';
+import Link from '@material-ui/core/Link';
+import Chart from './Chart';
+import Deposits from './Deposits';
+import Orders from './Orders';
 
 
-const useStyles = makeStyles({
-  container: {
-    padding: '0 5%', width: '100%', margin: 0,
+function Copyright() {
+  return (
+    <Typography variant="body2" color="textSecondary" align="center">
+      {'Copyright © '}
+      <Link color="inherit" href="https://material-ui.com/">
+        Your Website
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  );
+}
+
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex',
   },
-});
-
-
+  content: {
+    flexGrow: 1,
+    height: '100vh',
+    overflow: 'auto',
+  },
+  container: {
+    paddingTop: theme.spacing(4),
+    paddingBottom: theme.spacing(4),
+  },
+  paper: {
+    padding: theme.spacing(2),
+    display: 'flex',
+    overflow: 'auto',
+    flexDirection: 'column',
+  },
+  fixedHeight: {
+    height: 240,
+  },
+}));
 
 export default function Dashboard() {
   const classes = useStyles();
-  const count = useSelector(state => state.count);
-  const isLogged = useSelector(state => state.isLogged);
-  const dispatch = useDispatch();
-
-  // const [newsArticles, setNewsArticles] = useState([]);
-
-
-  // useEffect(() => {
-  //   alanBtn({
-  //     key: '9767423808b4be1092ee90edbd6e96a02e956eca572e1d8b807a3e2338fdd0dc/stage',
-  //     onCommand: ({ command, articles }) => {
-  //       if (command === 'newHeadlines') {
-  //           // Call the client code that will react to the received command
-  //           // console.log(articles);
-  //           // setNewsArticles(articles);
-  //         }
-  //       }
-  //   });
-  // }, []);
-
+  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   return (
-    <div>
-      <Typography variant="h6">Welcome to your dashboard!!</Typography>
-      <Grow in>
-        <Grid className={classes.container} container alignItems="stretch" spacing={3}>
-          {['1', '2', '3'].map(() => (
-            <Grid item xs={12} sm={6} md={4} lg={4} style={{ display: 'flex' }}>
-              <DashboardCard />
+    <div className={classes.root}>
+      <CssBaseline />
+      <div className={classes.appBarSpacer} />
+      <Container maxWidth="lg" className={classes.container}>
+        <Grow in>
+          <Grid container spacing={3}>
+            {/* Chart */}
+            <Grid item xs={12} md={8} lg={9}>
+              <Paper className={fixedHeightPaper}>
+                <Chart />
+              </Paper>
             </Grid>
-          ))}
-        </Grid>
-      </Grow>
-      <Grow in>
-        <DashboardPollDetails />
-      </Grow>
+            {/* Recent Deposits */}
+            <Grid item xs={12} md={4} lg={3}>
+              <Paper className={fixedHeightPaper}>
+                <Deposits />
+              </Paper>
+            </Grid>
+            {/* Recent Orders */}
+            <Grid item xs={12}>
+              <Paper className={classes.paper}>
+                <Orders />
+              </Paper>
+            </Grid>
+          </Grid>
+        </Grow>
+        <Box pt={4}>
+          <Copyright />
+        </Box>
+      </Container>
     </div>
   );
 }
