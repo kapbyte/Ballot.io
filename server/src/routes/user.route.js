@@ -24,6 +24,14 @@ client.on('connect', () => {
 });
 
 
+// router.get('/welcome', (req, res) => {
+//   res.json({ 
+//     success: true, 
+//     message: `Ballot.io server up and running` 
+//   });
+// });
+
+
 // Endpoint to create a poll
 router.post('/create-poll', async (req, res) => {
   const { error } = createPollDetails.validate(req.body);
@@ -139,7 +147,7 @@ router.get('/poll/pollID/:pollID', async (req, res) => {
 
 
 // Endpoint to cast vote
-router.put('/polls/:pollID', async (req, res) => {
+router.put('/poll/:pollID/vote', async (req, res) => {
   try {
     const pollID = req.params.pollID;
 
@@ -191,7 +199,7 @@ router.put('/polls/:pollID', async (req, res) => {
 
 
 // Endpoint to delete a poll
-router.delete('/polls/:pollID', async (req, res) => {
+router.delete('/poll/:pollID/delete', async (req, res) => {
   try {
     const pollID = req.params.pollID;
 

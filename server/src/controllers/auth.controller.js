@@ -14,12 +14,21 @@ const {
 } = require('../helpers/inputChecker');
 
 
+// Welcome controller
+exports.welcomeController = (req, res) => {
+  return res.json({ 
+    success: true, 
+    message: `Welcome to auth services` 
+  });
+}
+
+
 // Signup controller
 exports.registerController = async (req, res) => {
   const { error } = validSignUpDetails.validate(req.body);
   if (error) {
     return res.status(401).json({
-      status: false,
+      success: false,
       message: error.details[0].message
     });
   }
@@ -27,21 +36,21 @@ exports.registerController = async (req, res) => {
   // Check if user is already in DB
   const userEmailExist = await User.findOne({ email: req.body.email });
   if (userEmailExist) {
-    return res.status(409).json({
-      status: false,
+    return res.status(404).json({
+      success: false,
       message: "Email already exists"
     });
   }
 
   // Hash user password
-  // const salt = await bcrypt.genSalt(10);
-  // const hashedPassword = await bcrypt.hash(req.body.password, salt);
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
   // Generate Token
   const token = jwt.sign({
     name: req.body.name,
     email: req.body.email,
-    password: req.body.password
+    password: hashedPassword
   }, 
   process.env.TOKEN_SECRET_KEY, 
   {
@@ -49,27 +58,31 @@ exports.registerController = async (req, res) => {
   });
   
   console.log('Token -> ', token);
-  console.log(`client -> ${process.env.CLIENT_URL}`);
-
   const msg = {
-    to: req.body.email, // Change to your recipient
-    from: 'abigailchinaka@gmail.com', // Change to your verified sender
+    to: req.body.email,
+    from: SENDGRID_from, 
     subject: 'Account activation link',
     html: `
       <h1>Please use the following to activate your account</h1>
       <p>${process.env.CLIENT_URL}/auth/activate/${token}</p>
       <hr />
-      <p>This email may containe sensetive information</p>
+      <p>This email may contain sensetive information</p>
       <p>${process.env.CLIENT_URL}</p>
     `
   };
 
   try {
     await sgMail.send(msg);
-    return res.send(`Email sent successfully to ${req.body.email}`);
+    return res.json({ 
+      success: true, 
+      message: `Email sent successfully to ${req.body.email}` 
+    });
   } catch (error) {    
     console.log(error);
-    return res.send(`Something went wrong. Please contact us noreply@gmail.com`);
+    return res.json({
+      success: false,
+      message: `Something went wrong. Please contact us noreply@gmail.com` 
+    });
   }
 };
 
@@ -77,7 +90,6 @@ exports.registerController = async (req, res) => {
 // Email verification
 exports.emailVerificationController = (req, res) => {
   const { token } = req.body;
-
   if (token) {
     jwt.verify(token, process.env.TOKEN_SECRET_KEY, (err) => {
       if (err) {
@@ -98,6 +110,7 @@ exports.emailVerificationController = (req, res) => {
               message: "Internal server error"
             });
           } else {
+            console.log("saved user -> ", user);
             return res.status(200).json({
               status: true,
               _id: user._id,
@@ -105,7 +118,6 @@ exports.emailVerificationController = (req, res) => {
             });
           }
         });
-        
       }
     });
   } else {
