@@ -1,19 +1,52 @@
-const app = require("../index");
+const server = require("../index");
 const chai = require("chai");
 const chaiHttp = require("chai-http");
 
-const { expect } = chai;
+const assert = chai.assert;
+
 chai.use(chaiHttp);
 
 describe("Auth API", () => {
-  it("Welcomes user to Ballot.io", (done) => {
-    chai.request(app)
-      .get("/auth/welcome")
-      .end((err, res) => {
-        expect(res).to.have.status(200);
-        // expect(res.body.status).to.equals("success");
-        // expect(res.body.message).to.equals("Welcome To Testing API");
-        done();
-      });
+
+  /**
+   *  Test welcomeController
+   */
+
+  describe('It should say welcome', () => {
+
+    it("Welcomes user to Ballot.io", (done) => {
+      chai.request(server)
+        .get("/auth/welcome")
+        .end((err, res) => {
+          assert.equal(res.status, 200);
+          done();
+        });
+    });
+
   });
+
+
+  /**
+   * Test the /POST route (registerController)
+   */
+
+  describe('POST /auth/register', () => {
+    
+    it('Required fields filled in', (done) => {
+      chai.request(server)
+        .post("/auth/register")
+        .send({
+          name: 'John Doe',
+          email: 'johndoe@gmail.com',
+          password: '111111'
+        })
+        .end((err, res) => {
+          assert.equal(res.status, 200);
+          done();
+        });
+    });
+
+  });
+  
+  
 });

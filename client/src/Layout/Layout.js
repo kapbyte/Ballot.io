@@ -19,9 +19,9 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
-import PollIcon from '@material-ui/icons/Poll';
+import DashboardOutlinedIcon from '@material-ui/icons/DashboardOutlined';
+import PollOutlinedIcon from '@material-ui/icons/PollOutlined';
+import HowToVoteOutlinedIcon from '@material-ui/icons/HowToVoteOutlined';
 import UserProfileDialog from '../Screens/UserProfileDialog';
 
 const drawerWidth = 240;
@@ -197,12 +197,24 @@ export default function Layout(props) {
         </div>
         <Divider />
         <List>
-          {['Dashboard', 'Poll', 'Vote'].map((text, index) => (
-            <ListItem button key={text} component={Link} to={`/${text.toLowerCase()}`}>
-              <ListItemIcon>{index % 2 === 0 ? <PollIcon /> : <InboxIcon />}</ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
+          <ListItem button key={0} component={Link} to={`/dashboard`}>
+            <ListItemIcon>
+              <DashboardOutlinedIcon />
+            </ListItemIcon>
+            <ListItemText primary="Dashboard" />
+          </ListItem>
+          <ListItem button key={1} component={Link} to={`/poll`}>
+            <ListItemIcon>
+              <PollOutlinedIcon />
+            </ListItemIcon>
+            <ListItemText primary="Poll" />
+          </ListItem>
+          <ListItem button key={2} component={Link} to={`/vote`}>
+            <ListItemIcon>
+              <HowToVoteOutlinedIcon />
+            </ListItemIcon>
+            <ListItemText primary="Vote" />
+          </ListItem>
         </List>
       </Drawer>
       <main className={classes.content}>

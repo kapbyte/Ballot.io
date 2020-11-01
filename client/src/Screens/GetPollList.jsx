@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { GET_ALL_USER_POLLS_API, test } from '../API';
 import { useSelector, useDispatch } from 'react-redux';
 import { pollList } from '../actions';
 import FormDialog from './FormDialog';
@@ -43,11 +44,13 @@ export default function GetPollList() {
   const [isLoaded, setIsLoaded] = useState(false);
   const pollData = useSelector(state => state.pollDataList.pollDataList);
   const dispatch = useDispatch();
-  console.log("poll page -> ", pollData);
 
   useEffect(() => {
     try {
       console.log('page loaded');
+      console.log('GET_ALL_USER_POLLS_API ', GET_ALL_USER_POLLS_API);
+      console.log('test ', test)
+
       const userID = JSON.parse(localStorage.getItem('user'))._id;
 
       (async () => {

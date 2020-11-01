@@ -38,7 +38,7 @@ exports.registerController = async (req, res) => {
   if (userEmailExist) {
     return res.status(404).json({
       success: false,
-      message: "Email already exists"
+      message: "Email already exists!"
     });
   }
 
@@ -60,14 +60,13 @@ exports.registerController = async (req, res) => {
   console.log('Token -> ', token);
   const msg = {
     to: req.body.email,
-    from: SENDGRID_from, 
+    from: process.env.SENDGRID_from, 
     subject: 'Account activation link',
     html: `
-      <h1>Please use the following to activate your account</h1>
-      <p>${process.env.CLIENT_URL}/auth/activate/${token}</p>
+      <h3>Welcome to Ballot.io</h3>
+      <p>Please click on the link to activate your account</p>
+      <a href="${process.env.CLIENT_URL}/auth/activate/${token}">Activate your account</a>
       <hr />
-      <p>This email may contain sensetive information</p>
-      <p>${process.env.CLIENT_URL}</p>
     `
   };
 
@@ -172,8 +171,8 @@ exports.loginController = async (req, res) => {
   }
 
   // Confirm password
-  // const isPasswordValid = await bcrypt.compare(req.body.password, user.password);
-  if (req.body.password != user.password) {
+  const isPasswordValid = await bcrypt.compare(req.body.password, user.password);
+  if (!isPasswordValid) {
     return res.status(401).json({
       status: false,
       message: "Invalid password"
