@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { GET_ALL_USER_POLLS_API, test } from '../API';
+import { getCookie } from '../helpers/auth';
+import { GET_ALL_POLLS_API } from '../API';
 import { useSelector, useDispatch } from 'react-redux';
+import { ReactComponent as EmptyPoll } from '../assests/noData.svg';
 import { pollList } from '../actions';
 import FormDialog from './FormDialog';
 import MenuPoll from './MenuPoll';
@@ -12,12 +14,9 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import DeleteIcon from '@material-ui/icons/Delete';
-import Fab from '@material-ui/core/Fab';
-import AddIcon from '@material-ui/icons/Add';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
+import axios from 'axios';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -34,39 +33,42 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function handleCheckItem(index) {
-  console.log('handleCheckItem', index);
+function NoData() {
+  return (
+    <div>
+      <EmptyPoll />
+    </div>
+  );
 }
 
 
 export default function GetPollList() {
   const classes = useStyles();
   const [isLoaded, setIsLoaded] = useState(false);
-  const pollData = useSelector(state => state.pollDataList.pollDataList);
+  const pollData = useSelector(state => state.pollDataList.data);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    try {
-      console.log('page loaded');
-      console.log('GET_ALL_USER_POLLS_API ', GET_ALL_USER_POLLS_API);
-      console.log('test ', test)
+    const userID = JSON.parse(localStorage.getItem('user'))._id;
+    const token = getCookie('token')
+    console.log('useEffect token -> ', token);
 
-      const userID = JSON.parse(localStorage.getItem('user'))._id;
+    (async () => {
+      const response = await fetch(`${GET_ALL_POLLS_API}/${userID}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
 
-      (async () => {
-        let response = await fetch(`http://localhost:8080/user/polls/userID/${userID}`);
-        console.log("response -> ", response);
-        
-        let data = await response.json();
-        console.log("data -> ", data);
+      console.log('response -> ', response);
+      let data = await response.json();
+      console.log("data -> ", data);
 
-        dispatch(pollList(data));
-        setIsLoaded(true);
-      })();
+      dispatch(pollList(data));
+      setIsLoaded(true);
 
-    } catch (error) {
-      console.log(error);
-    }
+    })();
+    
   }, []);
 
   const [open, setOpen] = React.useState(false);
@@ -82,47 +84,47 @@ export default function GetPollList() {
 
   return (
     <div className={classes.root}>
-      <Typography variant="h6">Poll list of { JSON.parse(localStorage.getItem('user')).name }</Typography>
-      { !isLoaded ? <CircularProgress /> : isLoaded && (pollData === undefined || !pollData.length) ? <DeleteIcon /> : (
-        <TableContainer component={Paper}>
-          <Table className={classes.table} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell></TableCell>
-                <TableCell>Title</TableCell>
-                <TableCell align="center">Contestant</TableCell>
-                <TableCell align="center">Total Vote</TableCell>
-                <TableCell align="center">Expires</TableCell>
-                <TableCell align="center">Poll ID</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {pollData.map((row, index) => (
-                <TableRow key={index}>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell component="th" scope="row">
-                    { row.title }
-                  </TableCell>
-                  <TableCell align="center">{ row.options.length }</TableCell>
-                  <TableCell align="center">{ row.totalVotes }</TableCell>
-                  <TableCell align="center">{ row.date }</TableCell>
-                  <TableCell align="center">{ row._id }</TableCell>
-                  <MenuPoll
-                    data={row}
-                    onClick={() => {
-                      handleCheckItem(index);
-                    }}
-                  />
+      { !isLoaded ? <CircularProgress /> : isLoaded && (pollData === undefined || !pollData.length) ? <NoData /> : (
+        <div className={classes.root}>
+          <Typography variant="h5">Poll List</Typography>
+          <TableContainer component={Paper}>
+            <Table className={classes.table} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell></TableCell>
+                  <TableCell>Title</TableCell>
+                  <TableCell align="center">Contestant</TableCell>
+                  <TableCell align="center">Total Vote</TableCell>
+                  <TableCell align="center">Expires</TableCell>
+                  <TableCell align="center">Poll ID</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableHead>
+              <TableBody>
+                {pollData.map((row, index) => (
+                  <TableRow key={index}>
+                    <TableCell>{index + 1}</TableCell>
+                    <TableCell component="th" scope="row">
+                      { row.title }
+                    </TableCell>
+                    <TableCell align="center">{ row.options.length }</TableCell>
+                    <TableCell align="center">{ row.totalVotes }</TableCell>
+                    <TableCell align="center">{ row.date }</TableCell>
+                    <TableCell align="center">{ row._id }</TableCell>
+                    <MenuPoll
+                      data={row}
+                    />
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </div>
       )}
-      {/* <Fab color="primary" aria-label="add" > 
-        <AddIcon />
-      </Fab> */}
-      <FormDialog open={open} onClose={handleClose} onClick={handleClickOpen} />
+      <FormDialog 
+        open={open} 
+        onClose={handleClose} 
+        onClick={handleClickOpen} 
+      />
     </div>
   );
 }

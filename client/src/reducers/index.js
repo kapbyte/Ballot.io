@@ -1,6 +1,6 @@
 import { 
   countReducer, 
-  isLoggedReducer, 
+  isLoggedInReducer, 
   pollListReducer, 
   pollItemReducer 
 } from './reducers';
@@ -8,7 +8,7 @@ import { combineReducers } from 'redux';
 
 const rootReducer = combineReducers({
   count: countReducer,
-  isLogged: isLoggedReducer,
+  isLoggedIn: isLoggedInReducer,
   pollDataList: pollListReducer,
   pollItem: pollItemReducer
 });

@@ -36,82 +36,24 @@
   ],
   "tags": [
     {
-      "name": "CRUD operations"
+      "name": "Auth operations"
+    },
+    {
+      "name": "User operations"
     }
   ],
   "paths": {
-    "/users": {
-      "get": {
-        "tags": ["CRUD operations"],
-        "description": "Get users",
-        "operationId": "getUsers",
-        "parameters": [
-          {
-            "name": "x-company-id",
-            "n": "header",
-            "schema": {
-              "$ref": "#/components/schemas/companyId"
-            },
-            "required": true,
-            "description": "Company id where the users work"
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "default": 1
-            },
-            "required": false
-          },
-          {
-            "name": "orderBy",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "enum": ["asc", "desc"],
-              "default": "asc"
-            },
-            "required": false
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Users were obtained",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Users"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Missing parameters",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                },
-                "example": {
-                  "message": "companyId is missing",
-                  "internal_code": "missing_parameters"
-                }
-              }
-            }
-          }
-        }
-      },
+    "/auth/register": {
       "post": {
-        "tags": ["CRUD operations"],
-        "description": "Create users",
-        "operationId": "createUsers",
+        "tags": ["Auth operations"],
+        "description": "Register new users",
+        "operationId": "registerUsers",
         "parameters": [],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Users"
+                "$ref": "#/components/schemas/User"
               }
             }
           },
@@ -119,9 +61,9 @@
         },
         "responses": {
           "200": {
-            "description": "New users were created"
+            "description": "Email sent successfully to johndoe@gmail.com"
           },
-          "400": {
+          "401": {
             "description": "Invalid parameters",
             "content": {
               "application/json": {
@@ -129,8 +71,210 @@
                   "$ref": "#/components/schemas/Error"
                 },
                 "example": {
-                  "message": "User identificationNumbers 10, 20 already exist",
-                  "internal_code": "invalid_parameters"
+                  "success": false,
+                  "message": "\"password\" is not allowed to be empty"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["Auth operations"],
+        "description": "Login a user",
+        "operationId": "loginUsers",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Login"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully logged in",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eygwZjQwZGIiLCJV4cCI6MTYwNDQxMTI4NH0.4dv6IJ3NPwCxkk7WRwj8pehabO5lVxEEOVKLTTVLjvQ",
+                  "user": {
+                      "_id": "5fa07ae1335ecf11280f40db",
+                      "name": "Kelechi Chinaka",
+                      "email": "mrkelechichinaka@gmail.com"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "success": false,
+                  "message": "\"password\" is not allowed to be empty"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/forgot-password": {
+      "put": {
+        "tags": ["Auth operations"],
+        "description": "Generate a new user password",
+        "operationId": "passwordUsers",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "email": "johndoe@gmail.com"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Password link sent to email",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "message": "Email has been sent to johndoe@gmail.com. Follow the instruction to set a new password."
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid parameters",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": false,
+                  "message": "\"email\" is required"
+              }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/polls/userID/": {
+      "get": {
+        "tags": ["User operations"],
+        "description": "Get list of poll by userID",
+        "operationId": "getUserPollList",
+        "parameters": [
+          {
+            "name": "userID",
+            "n": "header",
+            "schema": {
+              "$ref": "#/components/schemas/companyId"
+            },
+            "required": true,
+            "description": "Add userID as query params"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User list of poll provided",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": true,
+                  "data": [{
+                    "options": [{
+                      "name": "APC",
+                        "count": 0,
+                        "option_id": "5fa16dc8cc405a084471a42c"
+                      },
+                      {
+                        "name": "PDP",
+                        "count": 0,
+                        "option_id": "5fa16dc8cc405a084471a42d"
+                      },
+                      {
+                        "name": "YouthFC",
+                        "count": 0,
+                        "option_id": "5fa16dc8cc405a084471a42e"
+                      }],
+                      "_id": "5fa16dc8cc405a084471a42f",
+                      "createdBy": "5f92a956072dee19b07981b1",
+                      "title": "Election2023",
+                      "totalVotes": 0,
+                      "date": "2020-11-03T14:48:40.840Z",
+                      "__v": 0
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing required parameters. eg token",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": false,
+                  "message": "No token provided. Access denied!"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/poll/create": {
+      "post": {
+        "tags": ["User operations"],
+        "description": "Create new poll",
+        "operationId": "createPoll",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "example": {
+                "createdBy": "5fa19cef90563a158cda4fc2",
+                "title": "Election2023",
+                "options": ["APC", "PDP", "YouthFC"]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Poll created successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": true,
+                  "message": "Poll created successfully",
+                  "_id": "5fa1a11490563a158cda4fd6"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid parameters",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": false,
+                  "message": "\"createdBy\" is required"
                 }
               }
             }
@@ -141,50 +285,40 @@
   },
   "components": {
     "schemas": {
-      "identificationNumber": {
-        "type": "integer",
-        "description": "User identification number",
-        "example": 1234
-      },
-      "username": {
+      "name": {
         "type": "string",
-        "example": "raparicio"
+        "example": "John Doe"
       },
-      "userType": {
+      "email": {
         "type": "string",
-        "enum": "USER_TYPES",
-        "default": "REGULAR"
+        "example": "johndoe@gmail.com"
       },
-      "companyId": {
-        "type": "integer",
-        "description": "Company id where the user works",
-        "example": 15
+      "password": {
+        "type": "string",
+        "example": "123456"
       },
       "User": {
         "type": "object",
         "properties": {
-          "identificationNumber": {
-            "$ref": "#/components/schemas/identificationNumber"
+          "name": {
+            "$ref": "#/components/schemas/name"
           },
-          "username": {
-            "$ref": "#/components/schemas/username"
+          "email": {
+            "$ref": "#/components/schemas/email"
           },
-          "userType": {
-            "$ref": "#/components/schemas/userType"
-          },
-          "companyId": {
-            "$ref": "#/components/schemas/companyId"
+          "password": {
+            "$ref": "#/components/schemas/password"
           }
         }
       },
-      "Users": {
+      "Login": {
         "type": "object",
         "properties": {
-          "users": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/User"
-            }
+          "email": {
+            "$ref": "#/components/schemas/email"
+          },
+          "password": {
+            "$ref": "#/components/schemas/password"
           }
         }
       },
@@ -194,8 +328,8 @@
           "message": {
             "type": "string"
           },
-          "internal_code": {
-            "type": "string"
+          "success": {
+            "type": true
           }
         }
       }

@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { CREATE_POLL_API } from '../API/index';
+import { getCookie } from '../helpers/auth';
 import { makeStyles } from '@material-ui/core/styles';
 import { ToastContainer, toast } from 'react-toastify';
 import Button from '@material-ui/core/Button';
@@ -11,6 +13,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Tooltip from '@material-ui/core/Tooltip';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -70,13 +73,17 @@ export default function FormDialog() {
 
   const createPoll = async () => {
     console.log('createPoll clicked!');
-    const response = await fetch(`http://localhost:8080/user/create-poll`, {
+    const userID = JSON.parse(localStorage.getItem('user'))._id;
+    const token = getCookie('token');
+
+    const response = await fetch(`${CREATE_POLL_API}`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
       },
       body: JSON.stringify({
-        createdBy: JSON.parse(localStorage.getItem('user'))._id,
+        createdBy: userID,
         title: title,
         options: choices
       })
@@ -90,8 +97,6 @@ export default function FormDialog() {
     } else {
       toast.error(`${data.message}`);
     }
-
-    console.log(JSON.parse(localStorage.getItem('user'))._id);
   }
 
 
@@ -100,9 +105,12 @@ export default function FormDialog() {
       {/* <Button variant="outlined" color="primary" onClick={handleClickOpen}>
         Open form dialog file.js
       </Button> */}
-      <Fab color="primary" aria-label="add" onClick={handleClickOpen} > 
-        <AddIcon />
-      </Fab>
+      <Tooltip title="Create Poll">
+        <Fab color="primary" aria-label="add" onClick={handleClickOpen} > 
+          <AddIcon />
+        </Fab>
+      </Tooltip>
+      
       <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
         <ToastContainer />
         {/* <CircularProgress /> */}

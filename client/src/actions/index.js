@@ -11,9 +11,9 @@ export const decrement = () => {
   }
 }
 
-export const signIn = () => {
+export const isLoggedIn = () => {
   return {
-    type: 'Sign_In'
+    type: 'isLoggedIn'
   }
 }
 

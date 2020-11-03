@@ -9,9 +9,9 @@ export const countReducer = (state = 0, action) => {
   }
 }
 
-export const isLoggedReducer = (state = false, action) => {
+export const isLoggedInReducer = (state = false, action) => {
   switch(action.type) {
-    case 'Sign_In':
+    case 'isLoggedIn':
       return !state;
     default:
       return state;

@@ -2,7 +2,6 @@ const router = require('express').Router();
 const mongoose = require('mongoose');
 const Poll = require('../model/Poll');
 const redis = require('redis');
-const { verifyTokenController } = require('../controllers/auth.controller');
 
 const { 
   createPollDetails
@@ -24,16 +23,16 @@ client.on('connect', () => {
 });
 
 
-// router.get('/welcome', (req, res) => {
-//   res.json({ 
-//     success: true, 
-//     message: `Ballot.io server up and running` 
-//   });
-// });
+router.get('/welcome', (req, res) => {
+  res.json({ 
+    success: true, 
+    message: `Ballot.io server up and running` 
+  });
+});
 
 
 // Endpoint to create a poll
-router.post('/create-poll', async (req, res) => {
+router.post('/poll/create', async (req, res) => {
   const { error } = createPollDetails.validate(req.body);
   if (error) {
     return res.status(401).json({
@@ -80,8 +79,7 @@ router.get('/polls/userID/:userID', async (req, res) => {
     // return the result to the client
     return res.status(200).json({ 
       status: true,
-      source: `Record from the server`,
-      pollDataList
+      data: pollDataList
     });
 
   } catch (error) {
@@ -99,31 +97,6 @@ router.get('/polls/userID/:userID', async (req, res) => {
 // Endpoint to find a particular poll based on the pollID
 router.get('/poll/pollID/:pollID', async (req, res) => {
   try {
-    // const pollID = req.params.pollID;
-
-    // Check the redis store for the data first
-    // client.get(pollID, async (err, record) => {
-    //   if (record) {
-    //     return res.status(200).json({ 
-    //       status: true,
-    //       source: `Record from the redis cache`,
-    //       record: JSON.parse(record)
-    //     });
-    //   } else {
-    //     const pollData = await Poll.find({ createdBy: req.params.pollID });
-
-    //     // save the record in the cache for subsequent request
-    //     client.setex(pollID, 1440, JSON.stringify(pollData));
-
-    //     // return the result to the client
-    //     return res.status(200).json({ 
-    //       status: true,
-    //       source: `Record from the server`,
-    //       pollData
-    //     });
-    //   }
-    // });
-
     const pollData = await Poll.findOne({ _id: req.params.pollID });
 
     if (pollData) {

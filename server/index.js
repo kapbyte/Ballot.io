@@ -12,6 +12,7 @@ const middlewareSetup = require('./src/middleware/middleware');
 const connectToDB = require('./src/config/db');
 const authRouter = require('./src/routes/auth.route');
 const userRouter = require('./src/routes/user.route');
+const { verifyTokenController } = require('./src/controllers/auth.controller');
 
 // Middlewares
 middlewareSetup(app);
@@ -25,7 +26,7 @@ app.get('/', (req, res) => {
 
 // Use routes
 app.use('/auth', authRouter);
-app.use('/user', userRouter);
+app.use('/user', verifyTokenController, userRouter);
 
 // Connect to MongoDB and start server
 if (process.env.NODE_ENV !== 'test') {

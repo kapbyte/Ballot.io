@@ -1,10 +1,66 @@
 import React, { useState } from 'react';
-import authSvg from '../assests/forget.svg';
-import { ToastContainer, toast } from 'react-toastify';
+import { USER_FORGOT_PASSWORD_API } from '../API/index';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify'
+import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import TextField from '@material-ui/core/TextField';
+import Paper from '@material-ui/core/Paper';
+import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import Typography from '@material-ui/core/Typography';
+import { makeStyles } from '@material-ui/core/styles';
 
-const ForgetPassword = ({ history }) => {
+function Copyright() {
+  return (
+    <Typography variant="body2" color="textSecondary" align="center">
+      {'Copyright © '}
+      <Link color="inherit" href="https://material-ui.com/">
+        Your Website
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  );
+}
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    height: '100vh',
+  },
+  image: {
+    backgroundImage: 'url(https://source.unsplash.com/random)',
+    backgroundRepeat: 'no-repeat',
+    backgroundColor:
+      theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+  },
+  paper: {
+    margin: theme.spacing(8, 4),
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  avatar: {
+    margin: theme.spacing(1),
+    backgroundColor: theme.palette.secondary.main,
+  },
+  form: {
+    width: '100%', // Fix IE 11 issue.
+    marginTop: theme.spacing(1),
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
+}));
+
+export default function ForgetPassword() {
+  const classes = useStyles();
+
+  let [isDisabled, setIsDisabled] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     textChange: 'Submit'
@@ -16,76 +72,98 @@ const ForgetPassword = ({ history }) => {
     setFormData({ ...formData, [text]: e.target.value });
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(`${process.env.REACT_APP_SERVER_API_URL}`);
 
     if (email) {
+      setIsDisabled(true);
       setFormData({ ...formData, textChange: 'Submitting' });
-      axios.put(`https://ballot-io.herokuapp.com/auth/forgot-password`, {
-        email
-      })
-      .then(() => {
-        setFormData({ ...formData, email: '' });
-        toast.success(`Please check your email`);
-      })
-      .catch(err => {
-        console.log(err.response);
-        toast.error(err.response.data.error);
+      const response = await fetch(`${USER_FORGOT_PASSWORD_API}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email
+        })
       });
+  
+      const data = await response.json();
+      setIsDisabled(false);
+
+      if (data.success) {
+        setFormData({
+          ...formData,
+          email: '',
+          textChange: 'Submit'
+        });
+        toast.success(`${data.message}`);
+      } else {
+        setFormData({
+          ...formData,
+          textChange: 'Submit'
+        });
+        toast.error(`${data.message}`);
+      }
     } else {
       toast.error('Please fill email field');
     }
   };
 
+
   return (
-    <div className='min-h-screen bg-gray-100 text-gray-900 flex justify-center'>
+    <Grid container component="main" className={classes.root}>
+      <CssBaseline />
       <ToastContainer />
-      <div className='max-w-screen-xl m-0 sm:m-20 bg-white shadow sm:rounded-lg flex justify-center flex-1'>
-        <div className='lg:w-1/2 xl:w-5/12 p-6 sm:p-12'>
-          <div className='mt-12 flex flex-col items-center'>
-            <h1 className='text-2xl xl:text-3xl font-extrabold'>
-              Forget Password
-            </h1>
-            <div className='w-full flex-1 mt-8 text-indigo-500'>
-              
-              <form
-                className='mx-auto max-w-xs relative '
-                onSubmit={handleSubmit}
-              >
-                <input
-                  className='w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white'
-                  type='email'
-                  placeholder='Email'
-                  onChange={handleChange('email')}
-                  value={email}
-                />
-                <button
-                  type='submit'
-                  className='mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none'
-                >
-                  <i className='fas fa-sign-in-alt  w-6  -ml-2' />
-                  <span className='ml-3'>Submit</span>
-                </button>
-                <Link
-                  to='/'
-                  className='no-underline hover:underline text-indigo-500 text-md text-right absolute right-0  mt-2'
-                >
+      <Grid item xs={false} sm={4} md={7} className={classes.image} />
+      <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+        <div className={classes.paper}>
+          <Avatar className={classes.avatar}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            Forgot Password
+          </Typography>
+          <form className={classes.form} noValidate>
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email Address"
+              name="email"
+              autoComplete="email"
+              autoFocus
+              value={email}
+              onChange={handleChange('email')}
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+              disabled={isDisabled}
+              onClick={handleSubmit}
+            >
+              { textChange }
+            </Button>
+            <Grid container>
+              <Grid item xs>
+              </Grid>
+              <Grid item>
+                <Link to='/' variant="body2">
                   Sign In
                 </Link>
-              </form>
-            </div>
-          </div>
+              </Grid>
+            </Grid>
+            <Box mt={5}>
+              <Copyright />
+            </Box>
+          </form>
         </div>
-        <div className='flex-1 bg-indigo-100 text-center hidden lg:flex'>
-          <div
-            className='m-12 xl:m-16 w-full bg-contain bg-center bg-no-repeat'
-            style={{ backgroundImage: `url(${authSvg})` }}
-          ></div>
-        </div>
-      </div>
-    </div>
+      </Grid>
+    </Grid>
   );
-};
-
-export default ForgetPassword;
+}

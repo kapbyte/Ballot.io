@@ -72,13 +72,13 @@ exports.registerController = async (req, res) => {
 
   try {
     await sgMail.send(msg);
-    return res.json({ 
+    return res.status(200).json({ 
       success: true, 
       message: `Email sent successfully to ${req.body.email}` 
     });
   } catch (error) {    
     console.log(error);
-    return res.json({
+    return res.status(501).json({
       success: false,
       message: `Something went wrong. Please contact us noreply@gmail.com` 
     });
@@ -93,7 +93,7 @@ exports.emailVerificationController = (req, res) => {
     jwt.verify(token, process.env.TOKEN_SECRET_KEY, (err) => {
       if (err) {
         return res.status(407).json({
-          status: false,
+          success: false,
           message: "Expired token. Signup again"
         });
       } else {
@@ -105,13 +105,13 @@ exports.emailVerificationController = (req, res) => {
         user.save((err, user) => {
           if (err) {
             return res.status(501).json({
-              status: false,
+              success: false,
               message: "Internal server error"
             });
           } else {
             console.log("saved user -> ", user);
             return res.status(200).json({
-              status: true,
+              success: true,
               _id: user._id,
               message: "Registration successful"
             });
@@ -121,15 +121,15 @@ exports.emailVerificationController = (req, res) => {
     });
   } else {
     return res.status(408).json({
-      status: false,
+      success: false,
       message: "Something went wrong"
     });
   }
 };
 
 exports.verifyTokenController = (req, res, next) => {
-  const token = req.body.token;
-  console.log(">>",token);
+  const token = (req.headers.authorization).split(' ')[1];
+  console.log('token -> ', token);
   
   if (!token) {
     return res.status(401).json({
@@ -140,7 +140,7 @@ exports.verifyTokenController = (req, res, next) => {
 
   try {
     const verified = jwt.verify(token, process.env.TOKEN_SECRET_KEY);
-    console.log("->> ", verified);
+    console.log("verified -> ", verified);
     next();
   } catch (error) {
     return res.status(401).json({
@@ -156,7 +156,7 @@ exports.loginController = async (req, res) => {
   const { error } = validLoginDetails.validate(req.body);
   if (error) {
     return res.status(401).json({
-      status: false,
+      success: false,
       message: error.details[0].message
     });
   }
@@ -165,7 +165,7 @@ exports.loginController = async (req, res) => {
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
     return res.status(401).json({
-      status: false,
+      success: false,
       message: "Email does not exists"
     });
   }
@@ -174,18 +174,18 @@ exports.loginController = async (req, res) => {
   const isPasswordValid = await bcrypt.compare(req.body.password, user.password);
   if (!isPasswordValid) {
     return res.status(401).json({
-      status: false,
+      success: false,
       message: "Invalid password"
     });
   }
   
   // Generate a token and send to client
-  const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET_KEY, { expiresIn: '5m' });
-
+  const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET_KEY, { expiresIn: '60m' });
   const { _id, name, email } = user;
   
-  return res.json({ 
-    token, 
+  return res.send({ 
+    success: true,
+    token,
     user: { _id, name, email } 
   });
 };
@@ -198,14 +198,15 @@ exports.forgotPasswordController = (req, res) => {
 
   if (error) {
     return res.status(401).json({
-      status: false,
+      success: false,
       message: error.details[0].message
     });
   } else {
     User.findOne({ email }, (err, user) => {
       if (err || !user) {
         return res.status(400).json({
-          error: 'User with that email does not exist'
+          success: false,
+          message: 'User with that email does not exist'
         });
       }
 
@@ -213,12 +214,13 @@ exports.forgotPasswordController = (req, res) => {
       console.log("reset -> ", token);
 
       const msg = {
-        from: 'abigailchinaka@gmail.com',
+        from: process.env.SENDGRID_from,
         to: email,
         subject: `Password forgot link`,
         html: `
-          <h1>Please use the following link to reset your password</h1>
-          <p>${process.env.CLIENT_URL}/auth/reset-password/${token}</p>
+          <p>Please use the following link to reset your password</p>
+          <a href="${process.env.CLIENT_URL}/auth/reset-password/${token}">Create new password</a>
+          <hr />
         `
       };
 
@@ -226,21 +228,23 @@ exports.forgotPasswordController = (req, res) => {
         if (err) {
           console.log('RESET PASSWORD LINK ERROR', err);
           return res.status(501).json({
-            status: false,
-            error: 'Database connection error on user password forgot request'
+            success: false,
+            message: 'Database connection error on user password forgot request'
           });
         } else {
             sgMail.send(msg)
               .then(() => {
                 // console.log('SIGNUP EMAIL SENT', sent)
                 return res.json({
-                  message: `Email has been sent to ${email}. Follow the instruction to activate your account.`
+                  success: true,
+                  message: `Email has been sent to ${email}. Follow the instruction to set a new password.`
                 });
               })
               .catch(err => {
                 // console.log('SIGNUP EMAIL SENT ERROR', err)
                 console.log(err);
                 return res.json({
+                  success: false,
                   message: err.message
                 });
               }
@@ -257,7 +261,7 @@ exports.resetPasswordController = (req, res) => {
   const { error } = resetPasswordDetails.validate(req.body);
   if (error) {
     return res.status(401).json({
-      status: false,
+      success: false,
       message: error.details[0].message
     });
   }
@@ -272,7 +276,7 @@ exports.resetPasswordController = (req, res) => {
     jwt.verify(resetPasswordLink, process.env.RESET_PASSWORD_KEY, (err) => {
       if (err) {
         return res.status(407).json({
-          status: false,
+          success: false,
           message: "Expired token. Signup again"
         });
       } else {
@@ -280,7 +284,7 @@ exports.resetPasswordController = (req, res) => {
         User.findOne({ resetPasswordLink }, (err, user) => {
           if (err || !user) {
             return res.status(401).json({
-              status: false,
+              success: false,
               message: "User with this token does not exists"
             });
           }
@@ -299,6 +303,7 @@ exports.resetPasswordController = (req, res) => {
               });
             }
             res.status(200).json({
+              success: true,
               message: `Your password has been changed.`
             });
           });

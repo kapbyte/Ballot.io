@@ -1,16 +1,73 @@
 import React, { useState, useEffect } from 'react';
-import authSvg from '../assests/welcome.svg';
+import { Link } from 'react-router-dom';
+import { ACTIVATE_USER_ACCOUNT_API } from '../API/index';
 import { ToastContainer, toast } from 'react-toastify';
-import axios from 'axios';
 import jwt from 'jsonwebtoken';
-import { authenticate, isAuth } from '../helpers/auth';
-import { Link, Redirect } from 'react-router-dom';
+import { isAuth } from '../helpers/auth';
+import { Redirect } from 'react-router-dom';
+import Avatar from '@material-ui/core/Avatar';
+import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Paper from '@material-ui/core/Paper';
+import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import Typography from '@material-ui/core/Typography';
+import { makeStyles } from '@material-ui/core/styles';
 
-const Activate = ({ match }) => {
+function Copyright() {
+  return (
+    <Typography variant="body2" color="textSecondary" align="center">
+      {'Copyright © '}
+      <Link color="inherit" href="https://material-ui.com/">
+        Your Website
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  );
+}
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    height: '100vh',
+  },
+  image: {
+    backgroundImage: 'url(https://source.unsplash.com/random)',
+    backgroundRepeat: 'no-repeat',
+    backgroundColor:
+      theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+  },
+  paper: {
+    margin: theme.spacing(8, 4),
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  avatar: {
+    margin: theme.spacing(1),
+    backgroundColor: theme.palette.secondary.main,
+  },
+  form: {
+    width: '100%', // Fix IE 11 issue.
+    marginTop: theme.spacing(1),
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
+}));
+
+
+export default function Activate({ match }) {
+  const classes = useStyles();
+
+  let [isDisabled, setIsDisabled] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     token: '',
-    show: true
+    textChange: 'Activate your Account'
   });
 
   useEffect(() => {
@@ -20,84 +77,90 @@ const Activate = ({ match }) => {
     if (token) {
       setFormData({ ...formData, name, token });
     }
-
-    console.log(name, token);
-
   }, [match.params]);
-  const { name, token, show } = formData;
 
-  const handleSubmit = e => {
+  const { name, token, textChange } = formData;
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    axios.post(`https://ballot-io.herokuapp.com/auth/activate`, {
-      token
-    })
-    .then(res => {
-      setFormData({
-        ...formData,
-        show: false
+    if (token) {
+      setIsDisabled(true);
+      setFormData({ ...formData, textChange: 'Please wait...' });
+
+      const response = await fetch(`${ACTIVATE_USER_ACCOUNT_API}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          token
+        })
       });
-      
-      toast.success(res.data.message);
-    })
-    .catch(err => {
-      console.log(err);
-      toast.error(err.response.data.errors);
-    });
+
+      const data = await response.json();
+      setIsDisabled(false);
+
+      if (data.success) {
+        setFormData({ 
+          ...formData, 
+          token: '',
+          textChange: 'Activate your Account' 
+        });
+        toast.success(`${data.message}`);
+      } else {
+        toast.error(`${data.message}`);
+      }
+    } else {
+      toast.error(`This token has been used!`);
+    }
   };
 
+
   return (
-    <div className='min-h-screen bg-gray-100 text-gray-900 flex justify-center'>
-      {isAuth() ? <Redirect to='/' /> : null}
+    <Grid container component="main" className={classes.root}>
+      <CssBaseline />
+      { isAuth() ? <Redirect to='/' /> : null }
       <ToastContainer />
-      <div className='max-w-screen-xl m-0 sm:m-20 bg-white shadow sm:rounded-lg flex justify-center flex-1'>
-        <div className='lg:w-1/2 xl:w-5/12 p-6 sm:p-12'>
-          <div className='mt-12 flex flex-col items-center'>
-            <h1 className='text-2xl xl:text-3xl font-extrabold'>
-              Welcome {name}
-            </h1>
-
-            <form
-              className='w-full flex-1 mt-8 text-indigo-500'
-              onSubmit={handleSubmit}
+      <Grid item xs={false} sm={4} md={7} className={classes.image} />
+      <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+        <div className={classes.paper}>
+          <Avatar className={classes.avatar}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            Welcome { name }
+          </Typography>
+          <form className={classes.form} noValidate>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+              disabled={isDisabled}
+              onClick={handleSubmit}
             >
-              <div className='mx-auto max-w-xs relative '>
-                <button
-                  type='submit'
-                  className='mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none'
-                >
-                  <i className='fas fa-user-plus fa 1x w-6  -ml-2' />
-                  <span className='ml-3'>Activate your Account</span>
-                </button>
-              </div>
-              <div className='my-12 border-b text-center'>
-                <div className='leading-none px-2 inline-block text-sm text-gray-600 tracking-wide font-medium bg-white transform translate-y-1/2'>
-                  Or sign up again
-                </div>
-              </div>
-              <div className='flex flex-col items-center'>
-                <a
-                  className='w-full max-w-xs font-bold shadow-sm rounded-lg py-3
-           bg-indigo-100 text-gray-800 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow focus:shadow-sm focus:shadow-outline mt-5'
-                  href='/register'
-                  target='_self'
-                >
-                  <i className='fas fa-sign-in-alt fa 1x w-6  -ml-2 text-indigo-500' />
-                  <span className='ml-4'>Sign Up</span>
-                </a>
-              </div>
-            </form>
-          </div>
+              { textChange }
+            </Button>
+            <Grid container>
+              <Grid item xs>
+                <Link to="/" variant="body2">
+                  Sign In
+                </Link>
+              </Grid>
+              <Grid item>
+                <Link to="/register" variant="body2">
+                  Don't have an account? Sign Up
+                </Link>
+              </Grid>
+            </Grid>
+            <Box mt={5}>
+              <Copyright />
+            </Box>
+          </form>
         </div>
-        <div className='flex-1 bg-indigo-100 text-center hidden lg:flex'>
-          <div
-            className='m-12 xl:m-16 w-full bg-contain bg-center bg-no-repeat'
-            style={{ backgroundImage: `url(${authSvg})` }}
-          ></div>
-        </div>
-      </div>
-    </div>
+      </Grid>
+    </Grid>
   );
-};
-
-export default Activate;
+}
