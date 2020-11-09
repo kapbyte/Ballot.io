@@ -24,9 +24,14 @@ exports.resetPasswordDetails  = Joi.object({
   resetPasswordLink: Joi.string().required()
 });
 
-// Reset password input validation
+// Create poll input validation
 exports.createPollDetails  = Joi.object({
   createdBy: Joi.string().min(6).required(),
   title: Joi.string().min(6).required(),
   options: Joi.array().required().min(2).max(4)
+});
+
+// Delete poll input validaton
+exports.deletePollDetail = Joi.object({
+  createdBy: Joi.string().min(6).required(),
 });

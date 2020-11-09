@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { CREATE_POLL_API } from '../API/index';
+import { CREATE_POLL_API, GET_ALL_POLLS_API } from '../API';
+import { useSelector, useDispatch } from 'react-redux';
 import { getCookie } from '../helpers/auth';
+import { pollList } from '../actions';
 import { makeStyles } from '@material-ui/core/styles';
 import { ToastContainer, toast } from 'react-toastify';
 import Button from '@material-ui/core/Button';
@@ -14,6 +16,8 @@ import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Tooltip from '@material-ui/core/Tooltip';
+import Typography from '@material-ui/core/Typography';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -23,13 +27,25 @@ const useStyles = makeStyles((theme) => ({
       marginLeft: theme.spacing(2),
     },
   },
+  button: {
+    margin: theme.spacing(1),
+  },
 }));
 
 export default function FormDialog() {
   const classes = useStyles();
+  const pollData = useSelector(state => state.pollDataList.data);
+  const dispatch = useDispatch();
 
   const [open, setOpen] = React.useState(false);
-  const [dataFetched, setDataFetched] = useState(false)
+  const [dataFetched, setDataFetched] = useState(false);
+
+  let [isDisabled, setIsDisabled] = useState(false);
+  const [buttonText, setButtonText] = useState({
+    textChange: 'CREATE POLL'
+  });
+
+  const { textChange } = buttonText;
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -71,11 +87,31 @@ export default function FormDialog() {
     setChoices(newChoices)
   }
 
+  const getPollList = async () => {
+    console.log('getPollList clicked!');
+    const userID = JSON.parse(localStorage.getItem('user'))._id;
+    const token = getCookie('token');
+
+    const response = await fetch(`${GET_ALL_POLLS_API}/${userID}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    console.log('response -> ', response);
+    let data = await response.json();
+    console.log("data -> ", data);
+
+    dispatch(pollList(data));
+  }
+
   const createPoll = async () => {
     console.log('createPoll clicked!');
     const userID = JSON.parse(localStorage.getItem('user'))._id;
     const token = getCookie('token');
 
+    setIsDisabled(true);
+    setButtonText({ ...buttonText, textChange: 'SUBMITTING' });
     const response = await fetch(`${CREATE_POLL_API}`, {
       method: 'POST',
       headers: {
@@ -92,8 +128,14 @@ export default function FormDialog() {
     const data = await response.json();
     console.log('response -> ', data);
 
+    setIsDisabled(false);
+    setButtonText({ ...buttonText, textChange: 'CREATE POLL' });
+
     if (data.status) {
       toast.success(`${data.message}`);
+      getPollList(); // call get poll api
+      setTitle('');
+      setChoices(['']);
     } else {
       toast.error(`${data.message}`);
     }
@@ -117,10 +159,10 @@ export default function FormDialog() {
         <DialogTitle id="form-dialog-title">Create poll</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            To subscribe to this website, please enter your email address here. We will send updates
-            occasionally.
+            This 
           </DialogContentText>
-          <div className="w-full max-w-3xl mx-auto rounded shadow-md bg-gray">
+
+          {/* <div className="w-full max-w-3xl mx-auto rounded shadow-md bg-gray">
         <div className="py-5 px-8">
 
           <div className="mb-6">
@@ -147,8 +189,60 @@ export default function FormDialog() {
 
           <button onClick={addAnswer} className='bg-blue-600 text-white px-3 py-2 border border-blue-600 active:border-blue-700 text-sm rounded-sm hover:bg-blue-700 transition duration-150 ease-in-out'>Add choice</button>
         </div>
-      </div>
-          
+      </div> */}
+
+        <div>
+          <Typography>Enter the title of the poll</Typography>
+          <TextField
+            autoComplete="title"
+            name="title"
+            variant="outlined"
+            required
+            id="title"
+            label="Enter title"
+            size="small"
+            autoFocus
+            value={title}
+            onChange={(event) => setTitle(event.target.value)} 
+          />
+        </div>
+
+        <div>
+          <Typography>Enter all the possible answers for this poll</Typography>
+          {choices.map((choice, index) => (
+            <div key={index}>
+              <TextField
+                autoComplete="title"
+                name="title"
+                variant="outlined"
+                required
+                id={index}
+                label="Enter option"
+                size="small"
+                autoFocus
+                key={index}
+                value={title}
+                value={choice}
+                onChange={(event) => onChoiceChange(index, event.target.value)}
+              />
+              <Button
+                variant="contained"
+                color="secondary"
+                className={classes.button}
+                startIcon={<DeleteIcon />}
+                onClick={() => removeChoice(index)}
+              >
+                Delete
+              </Button>
+            </div>
+          ))}
+
+          <Button onClick={addAnswer} variant="contained" size="medium" color="primary">
+            Add choice
+          </Button>
+
+        </div>
+
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
@@ -159,8 +253,10 @@ export default function FormDialog() {
               createPoll();
               // handleClose();
            }}
-            color="primary">
-            Create Poll
+            disabled={isDisabled}
+            color="primary"
+          >
+            { textChange }
           </Button>
         </DialogActions>
       </Dialog>

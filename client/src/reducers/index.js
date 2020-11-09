@@ -10,7 +10,7 @@ const rootReducer = combineReducers({
   count: countReducer,
   isLoggedIn: isLoggedInReducer,
   pollDataList: pollListReducer,
-  pollItem: pollItemReducer
+  voteItem: pollItemReducer
 });
 
 export default rootReducer;

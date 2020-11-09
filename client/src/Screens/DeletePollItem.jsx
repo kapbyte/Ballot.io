@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
+import { DELETE_POLL_API, GET_ALL_POLLS_API } from '../API';
+import { getCookie } from '../helpers/auth';
 import { ToastContainer, toast } from 'react-toastify';
+import { useDispatch } from 'react-redux';
+import { pollList } from '../actions';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -13,7 +17,9 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 
 export default function DeletePollItem(props) {
   const [open, setOpen] = React.useState(false);
-  const [isDeleted, setIsDeleted] = useState(true);
+  const [isDeleted, setIsDeleted] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
+  const dispatch = useDispatch();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -23,24 +29,49 @@ export default function DeletePollItem(props) {
     setOpen(false);
   };
 
-  const handleDeleteItem = async () => {
-    console.log("item to delete -> ", props.data);
-    const pollID = props.data._id;
-    console.log("pollID -> ", pollID);
+  const getPollList = async () => {
+    const userID = JSON.parse(localStorage.getItem('user'))._id;
+    const token = getCookie('token');
 
-    setIsDeleted(false);
-    const response = await fetch(`http://localhost:8080/user/polls/${pollID}`, {
-      method: 'DELETE',
+    const response = await fetch(`${GET_ALL_POLLS_API}/${userID}`, {
       headers: {
-        'Content-Type': 'application/json'
+        Authorization: `Bearer ${token}`
       }
     });
 
+    let data = await response.json();
+    dispatch(pollList(data));
+  }
+
+  const handleDeleteItem = async () => {
+    const userID = JSON.parse(localStorage.getItem('user'))._id;
+    const pollID = props.data._id;
+    const token = getCookie('token');
+
     setIsDeleted(true);
+    setIsDisabled(true);
+    const response = await fetch(`${DELETE_POLL_API}/${pollID}/delete`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        createdBy: userID
+      })
+    });
+
+    setIsDeleted(false);
+    setIsDisabled(false);
+
     const data = await response.json();
     console.log("data -> ", data);
+
     if (data.status) {
       toast.success(`${data.message}`);
+
+      // call get poll api
+      getPollList();
     } else {
       toast.error(`${data.message}`);
     }
@@ -60,27 +91,27 @@ export default function DeletePollItem(props) {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{"Use Google's location service?"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">{"Are you sure?"}</DialogTitle>
         <DialogContent>
-          { isDeleted == false ? <CircularProgress /> : "" }
+          { isDeleted ? <CircularProgress /> : "" }
           <ToastContainer />
           <DialogContentText id="alert-dialog-description">
-            Let Google help apps determine location. This means sending anonymous location data to
-            Google, even when no apps are running.
+            Do you really want to delete these record? This process cannot be undone.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
-            Disagree
+            Cancel
           </Button>
           <Button 
             onClick={() => {
               handleDeleteItem();
-              handleClose();
+              // handleClose();
             }}
+            disabled={isDisabled}
             color="secondary"
           >
-            Agree
+            Delete
           </Button>
         </DialogActions>
       </Dialog>

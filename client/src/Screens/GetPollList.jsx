@@ -16,7 +16,6 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
-import axios from 'axios';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -95,7 +94,7 @@ export default function GetPollList() {
                   <TableCell>Title</TableCell>
                   <TableCell align="center">Contestant</TableCell>
                   <TableCell align="center">Total Vote</TableCell>
-                  <TableCell align="center">Expires</TableCell>
+                  <TableCell align="center">Created</TableCell>
                   <TableCell align="center">Poll ID</TableCell>
                 </TableRow>
               </TableHead>

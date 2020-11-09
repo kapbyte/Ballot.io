@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import clsx from 'clsx';
+import alanBtn from "@alan-ai/alan-sdk-web";
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Box from '@material-ui/core/Box';
@@ -55,6 +56,17 @@ const useStyles = makeStyles((theme) => ({
 export default function Dashboard() {
   const classes = useStyles();
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+
+  useEffect(() => {
+    alanBtn({
+      key: '9767423808b4be1092ee90edbd6e96a02e956eca572e1d8b807a3e2338fdd0dc/stage',
+      onCommand: (commandData) => {
+        if (commandData.command === 'go:back') {
+          // Call the client code that will react to the received command
+        }
+      }
+    });
+  }, []);
 
 
   return (

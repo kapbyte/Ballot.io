@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom'
-import { USER_REGISTRATION_API } from '../API/index';
+import { USER_REGISTRATION_API } from '../API';
 import { ToastContainer, toast } from 'react-toastify';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';

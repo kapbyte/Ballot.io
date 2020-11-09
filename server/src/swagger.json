@@ -172,7 +172,7 @@
         }
       }
     },
-    "/user/polls/userID/": {
+    "/user/polls/userID/:userID": {
       "get": {
         "tags": ["User operations"],
         "description": "Get list of poll by userID",
@@ -185,7 +185,7 @@
               "$ref": "#/components/schemas/companyId"
             },
             "required": true,
-            "description": "Add userID as query params"
+            "description": "Add userID as query params, where /:userID is the _id of user"
           }
         ],
         "responses": {
@@ -237,19 +237,47 @@
         }
       }
     },
+    "/user/poll/:pollID/delete": {
+      "delete": {
+        "tags": ["User operations"],
+        "description": "Delete a poll.",
+        "operationId": "deletePoll",
+        "parameters": [
+          {
+            "name": "pollID",
+            "n": "header",
+            "schema": {
+              "$ref": "#/components/schemas/companyId"
+            },
+            "required": true,
+            "description": "Add pollID as query params, where /:pollID been the _id of the poll to be deleted."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete successfull",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": true,
+                  "message": "Successfully deleted item!"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/user/poll/create": {
       "post": {
         "tags": ["User operations"],
         "description": "Create new poll",
         "operationId": "createPoll",
-        "parameters": [],
         "requestBody": {
           "content": {
             "application/json": {
-              "example": {
-                "createdBy": "5fa19cef90563a158cda4fc2",
-                "title": "Election2023",
-                "options": ["APC", "PDP", "YouthFC"]
+              "schema": {
+                "$ref": "#/components/schemas/CreatePollPayload"
               }
             }
           },
@@ -297,6 +325,18 @@
         "type": "string",
         "example": "123456"
       },
+      "createdBy": {
+        "type": "string",
+        "example": "5fa19cef90563a158cda4fc2"
+      },
+      "title": {
+        "type": "string",
+        "example": "Election2023"
+      },
+      "options": {
+        "type": "array",
+        "example": ["APC", "PDP", "YouthFC"]
+      },
       "User": {
         "type": "object",
         "properties": {
@@ -319,6 +359,20 @@
           },
           "password": {
             "$ref": "#/components/schemas/password"
+          }
+        }
+      },
+      "CreatePollPayload": {
+        "type": "object",
+        "properties": {
+          "createdBy": {
+            "$ref": "#/components/schemas/createdBy"
+          },
+          "title": {
+            "$ref": "#/components/schemas/title"
+          },
+          "options": {
+            "$ref": "#/components/schemas/options"
           }
         }
       },

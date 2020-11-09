@@ -1,6 +1,4 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
-import { pollItem } from '../actions';
 import { Link } from 'react-router-dom';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -11,7 +9,6 @@ import HowToVoteOutlinedIcon from '@material-ui/icons/HowToVoteOutlined';
 
 
 export default function MenuPoll(props) {
-  const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event) => {
@@ -32,12 +29,10 @@ export default function MenuPoll(props) {
     setOpen(false);
   };
 
-  const handleCheck = (data) => {
-    console.log("data -> ", data);
-    // const pollItem = useSelector(state => state.pollItem);
-    // const dispatch = useDispatch();
-    dispatch(pollItem(data));
-  };
+  // const handleCheck = (data) => {
+  //   console.log("data to vote on -> ", data);
+  //   dispatch(pollItem(data));
+  // };
 
 
   return (
@@ -71,7 +66,7 @@ export default function MenuPoll(props) {
         </MenuItem>
         <MenuItem
           onClick={() => {
-            handleCheck(props.data);
+            // handleCheck(props.data);
             handleClose();
           }}
           button 

@@ -100,7 +100,12 @@ exports.emailVerificationController = (req, res) => {
         const { name, email, password } = jwt.decode(token);
 
         // Create new user and save to MongoDB
-        const user = new User({ name, email, password });
+        const user = new User({ 
+          name, 
+          email, 
+          password,
+          totalPollCreated: 0
+        });
 
         user.save((err, user) => {
           if (err) {
@@ -180,7 +185,7 @@ exports.loginController = async (req, res) => {
   }
   
   // Generate a token and send to client
-  const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET_KEY, { expiresIn: '60m' });
+  const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET_KEY, { expiresIn: '120m' });
   const { _id, name, email } = user;
   
   return res.send({ 

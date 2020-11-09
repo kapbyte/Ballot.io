@@ -10,3 +10,5 @@ export const USER_RESET_PASSWORD_API = `${BASE_URL}/auth/reset-password`;
 // User operations API
 export const GET_ALL_POLLS_API = `${BASE_URL}/user/polls/userID`;
 export const CREATE_POLL_API = `${BASE_URL}/user/poll/create`;
+export const DELETE_POLL_API = `${BASE_URL}/user/poll`;
+export const GET_POLL_BY_ID_API = `${BASE_URL}/user/poll/pollID`;

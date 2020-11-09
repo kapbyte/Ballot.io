@@ -19,6 +19,10 @@ const userSchema = new mongoose.Schema({
     min: 5,
     max: 1024
   },
+  totalPollCreated: {
+    type: Number,
+    count: 0
+  },
   resetPasswordLink: {
     data: String,
     default: ''

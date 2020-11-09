@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { isLoggedIn } from '../actions';
 import { Link, Redirect } from 'react-router-dom';
-import { USER_LOGIN_API } from '../API/index';
+import { USER_LOGIN_API } from '../API';
 import { authenticate, isAuth } from '../helpers/auth';
 import { ToastContainer, toast } from 'react-toastify';
 import axios from 'axios';

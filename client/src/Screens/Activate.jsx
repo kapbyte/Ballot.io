@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ACTIVATE_USER_ACCOUNT_API } from '../API/index';
+import { ACTIVATE_USER_ACCOUNT_API } from '../API';
 import { ToastContainer, toast } from 'react-toastify';
 import jwt from 'jsonwebtoken';
 import { isAuth } from '../helpers/auth';

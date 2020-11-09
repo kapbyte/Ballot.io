@@ -26,7 +26,8 @@ app.get('/', (req, res) => {
 
 // Use routes
 app.use('/auth', authRouter);
-app.use('/user', verifyTokenController, userRouter);
+app.use('/user', userRouter);
+// app.use('/user', verifyTokenController, userRouter);
 
 // Connect to MongoDB and start server
 if (process.env.NODE_ENV !== 'test') {
