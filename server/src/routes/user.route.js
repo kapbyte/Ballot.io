@@ -178,8 +178,6 @@ router.put('/poll/:pollID/vote', async (req, res) => {
             Poll.updateOne({ _id: pollID }, { $inc: {totalVotes: 1} })
               .then(result => {
                 if (result) {
-                  console.log('result -> ', result);
-
                   // return the result to the client
                   return res.status(200).json({
                     success: true,

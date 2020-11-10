@@ -94,10 +94,7 @@ export default function VoteDashboard({ match }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('handleSubmit clicked');
-    console.log('value -> ', value);
-    const selectedIndex = voteData.options.map((item) => item.name).indexOf(value)
-    console.log('index -> ', selectedIndex);
+    const selectedIndex = voteData.options.map((item) => item.name).indexOf(value);
 
     const response = await fetch(`${VOTE_API}/${pollID}/vote`, {
       method: 'PUT',
@@ -105,7 +102,7 @@ export default function VoteDashboard({ match }) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        ip: '517',
+        ip: '5171',
         selectedIndex: selectedIndex
       })
     });
@@ -173,10 +170,10 @@ export default function VoteDashboard({ match }) {
                 {/* Recent Orders */}
                 <Grid item xs={12}>
                   <Paper className={classes.paper}>
-                    <Typography variant="h6">Vote details here: Cast your vote here</Typography>
+                    <Typography variant="h6">{voteData.title}</Typography>
                     <FormControl component="fieldset">
-                      <FormLabel component="legend">Gender</FormLabel>
-                      <RadioGroup aria-label="gender" name="gender1" value={value} onChange={handleChange}>
+                      <FormLabel component="legend"></FormLabel>
+                      <RadioGroup aria-label={value} name={value} value={value} onChange={handleChange}>
                         {voteData.options.map((data, index) => (
                           <FormControlLabel 
                             key={index}
