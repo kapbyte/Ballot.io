@@ -10,7 +10,6 @@ import ResetPassword from './Screens/ResetPassword';
 import Dashboard from './Screens/Dashboard';
 import CreatePoll from './Screens/CreatePoll';
 import GetPollList from './Screens/GetPollList';
-import VoteListing from './Screens/VoteListing';
 import VoteDashboard from './Screens/VoteDashboard';
 
 
@@ -29,7 +28,6 @@ function App() {
           <Route path='/dashboard' exact render={props => <Dashboard {...props} />} />
           <Route path='/create/poll' exact render={props => <CreatePoll {...props} />} />
           <Route path='/poll' exact render={props => <GetPollList {...props} />} />
-          <Route path='/vote' exact render={props => <VoteListing {...props} />} />
           <Route path='/poll/:pollID/vote' exact render={props => <VoteDashboard {...props} />} />
         </Layout>
 

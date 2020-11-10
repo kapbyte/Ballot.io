@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import Pusher from 'pusher-js';
 import { useDispatch, useSelector } from 'react-redux';
+import { ToastContainer, toast } from 'react-toastify';
 import { pollItem } from '../actions';
-import { GET_POLL_BY_ID_API } from '../API';
+import { GET_POLL_BY_ID_API, VOTE_API } from '../API';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Box from '@material-ui/core/Box';
@@ -85,7 +86,6 @@ export default function VoteDashboard({ match }) {
   }, []);
 
   const [value, setValue] = React.useState('');
-  console.log('value -> ', value);
   console.log('voteData -> ', voteData);
 
   const handleChange = (event) => {
@@ -95,50 +95,77 @@ export default function VoteDashboard({ match }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('handleSubmit clicked');
+    console.log('value -> ', value);
+    const selectedIndex = voteData.options.map((item) => item.name).indexOf(value)
+    console.log('index -> ', selectedIndex);
 
-    const response = await fetch(`http://localhost:8080/user/vote`, {
-      method: 'POST',
+    const response = await fetch(`${VOTE_API}/${pollID}/vote`, {
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        os: value
+        ip: '517',
+        selectedIndex: selectedIndex
       })
     });
 
     const data = await response.json();
     console.log('data -> ', data);
+
+    if (data.success) {
+      toast.success(`${data.message}`);
+    } else {
+      toast.error(`${data.message}`);
+    }
   }
 
   // Enable pusher logging - don't include this in production
-  Pusher.logToConsole = true;
+  // Pusher.logToConsole = true;
 
-  var pusher = new Pusher('ec46cbf6ef376f98cd70', {
-    cluster: 'eu'
-  });
+  // var pusher = new Pusher('ec46cbf6ef376f98cd70', {
+  //   cluster: 'eu'
+  // });
 
-  var channel = pusher.subscribe('os-poll');
-  channel.bind('os-vote', function(data) {
-    console.log('pusher data -> ', data);
-  });
+  // var channel = pusher.subscribe('os-poll');
+  // channel.bind('os-vote', function(data) {
+  //   console.log('pusher data -> ', data);
+  // });
 
+  const graphData = [
+    {
+      name: 'Page A', pv: 2400, amt: 2400,
+    },
+    {
+      name: 'Page B', pv: 1398, amt: 2210,
+    },
+    {
+      name: 'Page C', pv: 9800, amt: 2290,
+    },
+    {
+      name: 'Page D', pv: 3908, amt: 2000,
+    }
+  ];
 
   return (
     <div className={classes.root}>
       <CssBaseline />
+      <ToastContainer />
       <div className={classes.appBarSpacer} />
         { !isLoaded ? <CircularProgress /> : (
           <Container maxWidth="lg" className={classes.container}>
             <Grow in>
               <Grid container spacing={3}>
                 {/* Chart */}
-                <Grid item xs={12} md={8} lg={9}>
+                <Grid item xs={12} md={8} lg={6}>
                   <Paper className={fixedHeightPaper}>
-                    <VoteChart />
+                    <VoteChart 
+                      data={voteData.options}
+                    />
                   </Paper>
                 </Grid>
                 {/* Recent Deposits */}
-                <Grid item xs={12} md={4} lg={3}>
+                <Grid item xs={12} md={4} lg={6}>
                   <Paper className={fixedHeightPaper}>
                     <Deposits />
                   </Paper>

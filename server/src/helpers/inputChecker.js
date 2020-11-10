@@ -35,3 +35,9 @@ exports.createPollDetails  = Joi.object({
 exports.deletePollDetail = Joi.object({
   createdBy: Joi.string().min(6).required(),
 });
+
+// Vote input validaton
+exports.pollVoteDetail = Joi.object({
+  ip: Joi.string().required(),
+  selectedIndex: Joi.number().integer().min(0).max(3).required()
+});

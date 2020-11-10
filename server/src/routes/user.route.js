@@ -7,7 +7,8 @@ const Pusher = require("pusher");
 
 const { 
   createPollDetails,
-  deletePollDetail
+  deletePollDetail,
+  pollVoteDetail
 } = require('../helpers/inputChecker');
 
 
@@ -136,6 +137,14 @@ router.get('/poll/pollID/:pollID', async (req, res) => {
 // Endpoint to cast vote
 router.put('/poll/:pollID/vote', async (req, res) => {
   try {
+    const { error } = pollVoteDetail.validate(req.body);
+    if (error) {
+      return res.status(401).json({
+        success: false,
+        message: error.details[0].message
+      });
+    }
+
     const pollID = req.params.pollID;
 
     await client.SISMEMBER(pollID, req.body.ip, (err, result) => {
@@ -143,16 +152,20 @@ router.put('/poll/:pollID/vote', async (req, res) => {
       if (result) {
         client.SMEMBERS(pollID, console.log);
         return res.status(400).json({
-          status: false,
+          success: false,
           message: "You've already voted for this poll."
         });
       } else {
+        const selectedIndex = req.body.selectedIndex;
+        const update = {$inc: {}};
+        update.$inc[`options.${selectedIndex}.count`] = 1;
+
         // Update document
-        Poll.updateOne({ _id: pollID }, { $inc: {'options.1.count': 1} }, (err, doc) => {
+        Poll.updateOne({ _id: pollID }, { $inc: update.$inc }, (err, doc) => {
           if (err) { 
             console.log(err);
             return res.status(501).json({
-              status: false,
+              success: false,
               message: "Error updating document.",
             });
           } else {
@@ -160,13 +173,21 @@ router.put('/poll/:pollID/vote', async (req, res) => {
             client.SADD(pollID, req.body.ip);
             client.SMEMBERS(pollID, console.log);
 
-            console.log('updated doc -> ', doc);
 
-            // return the result to the client
-            return res.status(200).json({
-              status: true,
-              message: "Vote registered successfully"
-            });
+            // Update totalVotes field in poll collection
+            Poll.updateOne({ _id: pollID }, { $inc: {totalVotes: 1} })
+              .then(result => {
+                if (result) {
+                  console.log('result -> ', result);
+
+                  // return the result to the client
+                  return res.status(200).json({
+                    success: true,
+                    message: "Vote registered successfully"
+                  });
+                }
+              })
+              .catch(err => console.error(err))
           }
         });
       }
@@ -174,7 +195,7 @@ router.put('/poll/:pollID/vote', async (req, res) => {
   } catch (error)  {
     console.log(error);
     return res.status(501).json({
-      status: false,
+      success: false,
       message: "Something went wrong"
     });
   }

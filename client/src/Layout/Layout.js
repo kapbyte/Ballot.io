@@ -209,12 +209,6 @@ export default function Layout(props) {
             </ListItemIcon>
             <ListItemText primary="Poll" />
           </ListItem>
-          <ListItem button key={2} component={Link} to={`/vote`}>
-            <ListItemIcon>
-              <HowToVoteOutlinedIcon />
-            </ListItemIcon>
-            <ListItemText primary="Vote" />
-          </ListItem>
         </List>
       </Drawer>
       <main className={classes.content}>
