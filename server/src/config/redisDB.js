@@ -8,11 +8,10 @@ module.exports = async () => {
   });
 
   client.on('error', function (err) {
-    console.log(err)
+    console.log(err);
   });
 
   client.on('connect', function () {
-    console.log("Redis Connected...")
-    // client.get('name', console.log);
+    console.log("Redis Connected...");
   });
 }
