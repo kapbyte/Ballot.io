@@ -19,7 +19,7 @@ middlewareSetup(app);
 app.get('/', (req, res) => {
   res.json({ 
     success: true, 
-    message: `Ballot.io server up and running on port ${port}!` 
+    message: `Ballot.io server up and running on port ${port}!!` 
   });
 });
 
