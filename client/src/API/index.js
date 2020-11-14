@@ -1,4 +1,4 @@
-const BASE_URL = `http://localhost:8080`;
+const BASE_URL = `https://ballot-io.herokuapp.com`;
 
 // User authentication API
 export const USER_REGISTRATION_API = `${BASE_URL}/auth/register`;

@@ -35,7 +35,7 @@ export default function PollDetailDialog(props) {
         <DialogTitle id="alert-dialog-title">{ props.data.title }</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            This is the details page, showing contents about this pool.
+            This is the details page, showing contents about { props.data.title } poll.
           </DialogContentText>
         </DialogContent>
         <DialogActions>

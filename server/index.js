@@ -2,7 +2,6 @@ const express = require('express');
 const port = process.env.PORT || 8080;
 
 // Config dotenv
-// require('dotenv').config({ path: './src/config/config.env' });
 require('dotenv').config({ path: './src/.env' });
 
 const app = express();
@@ -20,7 +19,7 @@ middlewareSetup(app);
 app.get('/', (req, res) => {
   res.json({ 
     success: true, 
-    message: `Ballot.io server up and running on port ${port}...` 
+    message: `Ballot.io server up and running on port ${port}!!!` 
   });
 });
 

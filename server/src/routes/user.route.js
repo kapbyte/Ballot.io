@@ -173,7 +173,6 @@ router.put('/poll/:pollID/vote', async (req, res) => {
             client.SADD(pollID, req.body.ip);
             client.SMEMBERS(pollID, console.log);
 
-
             // Update totalVotes field in poll collection
             Poll.updateOne({ _id: pollID }, { $inc: {totalVotes: 1} })
               .then(result => {

@@ -46,56 +46,44 @@ exports.registerController = async (req, res) => {
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
-  const user = new User({ 
-    name: req.body.name, 
-    email: req.body.email, 
-    password: hashedPassword,
-    totalPollCreated: 0
-  });
-
-  await user.save();
-  return res.status(200).json({ 
-    success: true, 
-    message: `Successfully created ${user.name}!` 
-  });
-
   // Generate Token
-  // const token = jwt.sign({
-  //   name: req.body.name,
-  //   email: req.body.email,
-  //   password: hashedPassword
-  // }, 
-  // process.env.TOKEN_SECRET_KEY, 
-  // {
-  //   expiresIn: '5m'
-  // });
+  const token = jwt.sign({
+    name: req.body.name,
+    email: req.body.email,
+    password: hashedPassword
+  }, 
+  process.env.TOKEN_SECRET_KEY, 
+  {
+    expiresIn: '5m'
+  });
   
-  // console.log('Token -> ', token);
-  // const msg = {
-  //   to: req.body.email,
-  //   from: process.env.SENDGRID_from, 
-  //   subject: 'Account activation link',
-  //   html: `
-  //     <h3>Welcome to Ballot.io</h3>
-  //     <p>Please click on the link to activate your account</p>
-  //     <a href="${process.env.CLIENT_URL}/auth/activate/${token}">Activate your account</a>
-  //     <hr />
-  //   `
-  // };
+  console.log('Token -> ', token);
 
-  // try {
-  //   await sgMail.send(msg);
-  //   return res.status(200).json({ 
-  //     success: true, 
-  //     message: `Email sent successfully to ${req.body.email}` 
-  //   });
-  // } catch (error) {    
-  //   console.log(error);
-  //   return res.status(501).json({
-  //     success: false,
-  //     message: `Something went wrong. Please contact us noreply@gmail.com` 
-  //   });
-  // }
+  const msg = {
+    to: req.body.email,
+    from: process.env.SENDGRID_from, 
+    subject: 'Account activation link',
+    html: `
+      <h3>Welcome to Ballot.io</h3>
+      <p>Please click on the link to activate your account</p>
+      <a href="${process.env.CLIENT_URL}/auth/activate/${token}">Activate your account</a>
+      <hr />
+    `
+  };
+
+  try {
+    await sgMail.send(msg);
+    return res.status(200).json({ 
+      success: true, 
+      message: `Email sent successfully to ${req.body.email}` 
+    });
+  } catch (error) {    
+    console.log(error);
+    return res.status(501).json({
+      success: false,
+      message: `Something went wrong. Please contact us noreply@gmail.com` 
+    });
+  }
 };
 
 
