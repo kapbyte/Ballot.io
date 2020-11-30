@@ -128,7 +128,7 @@ export default function Login() {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Ballot Sign In
+            Sign In
           </Typography>
           <form className={classes.form} noValidate>
             <TextField
