@@ -2,6 +2,7 @@
 
 Ballot is a real-time E-Voting application. Our aim is to bring the voting box out for all to see. Its built to modern day technologies to provide you with the best voting experience.
 
+* [Live URL](https://ballot-io.netlify.app)
 
 
 ## What I will be building
@@ -25,6 +26,8 @@ Ballot is a real-time E-Voting application. Our aim is to bring the voting box o
 - Mocha / Chai (API Testing)
 - Swagger (API Documentation)
 
+## API Documentation
+* [See API Doc here](https://ballot-io.herokuapp.com/api/v1/#/)
 
 ## Contributions
 

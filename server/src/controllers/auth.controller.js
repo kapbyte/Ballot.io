@@ -66,7 +66,7 @@ exports.registerController = async (req, res) => {
     html: `
       <h3>Welcome to Ballot.io</h3>
       <p>Please click on the link to activate your account</p>
-      <a href="${process.env.CLIENT_URL}/auth/activate/${token}">Activate your account</a>
+      <a href="${process.env.CLIENT_URL}/auth/activate/${token}">Activate your account here</a>
       <hr />
     `
   };
