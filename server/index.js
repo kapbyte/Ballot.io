@@ -9,7 +9,7 @@ const middlewareSetup = require('./src/middleware/middleware');
 const connectToDB = require('./src/config/db');
 const authRouter = require('./src/routes/auth.route');
 const userRouter = require('./src/routes/user.route');
-const { verifyTokenController } = require('./src/controllers/auth.controller');
+const { verifyTokenController } = require('./src/controllers/auth.controller'); // Token verification
 
 // Middlewares
 middlewareSetup(app);
