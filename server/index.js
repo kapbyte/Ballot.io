@@ -15,7 +15,7 @@ const { verifyTokenController } = require('./src/controllers/auth.controller'); 
 middlewareSetup(app);
 
 app.get('/', (req, res) => {
-  res.json({ 
+  return res.status(200).json({ 
     success: true, 
     message: `Ballot.io server up and running on port ${port}!!!` 
   });
