@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { USER_FORGOT_PASSWORD_API } from '../API/index';
 import { Link } from 'react-router-dom';
+import passwordSvg from '../assests/password.svg';
 import { ToastContainer, toast } from 'react-toastify'
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
@@ -31,11 +32,11 @@ const useStyles = makeStyles((theme) => ({
     height: '100vh',
   },
   image: {
-    backgroundImage: 'url(https://source.unsplash.com/random)',
+    backgroundImage: `url(${passwordSvg})`,
     backgroundRepeat: 'no-repeat',
     backgroundColor:
       theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
-    backgroundSize: 'cover',
+    backgroundSize: 'contain',
     backgroundPosition: 'center',
   },
   paper: {

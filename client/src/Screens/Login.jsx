@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { isLoggedIn } from '../actions';
+import authSvg from '../assests/voting.svg';
 import { Link, Redirect } from 'react-router-dom';
 import { USER_LOGIN_API } from '../API';
 import { authenticate, isAuth } from '../helpers/auth';
@@ -35,11 +36,11 @@ const useStyles = makeStyles((theme) => ({
     height: '100vh',
   },
   image: {
-    backgroundImage: 'url(https://source.unsplash.com/random)',
+    backgroundImage: `url(${authSvg})`,
     backgroundRepeat: 'no-repeat',
     backgroundColor:
       theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
-    backgroundSize: 'cover',
+    backgroundSize: 'contain',
     backgroundPosition: 'center',
   },
   paper: {
@@ -128,7 +129,7 @@ export default function Login() {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign In
+            Login
           </Typography>
           <form className={classes.form} noValidate>
             <TextField
