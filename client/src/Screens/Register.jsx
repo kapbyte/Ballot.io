@@ -115,7 +115,7 @@ export default function Register() {
       }
     } else {
       setFormData({ ...formData, textChange: 'Sign Up' });
-      toast.error('Please fill all fields');
+      toast.error('Please fill all fields.');
     }
   };
 
