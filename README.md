@@ -38,4 +38,4 @@ Kindly, raise an issue on the repository, email or any other method to reach me.
 
 ## Copyright
 
-Copyright (c) 2020 Ke1echi. Released under the [Apache License]
+Copyright (c) 2020 kapbyte. Released under the [Apache License]
